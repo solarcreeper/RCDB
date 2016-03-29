@@ -148,13 +148,11 @@
   <ItemGroup>
     <ClInclude Include="helper.h" />
     <ClInclude Include="skiplist.h" />
-    <ClInclude Include="skiplist_node.h" />
     <ClInclude Include="slice.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="helper.cpp" />
     <ClCompile Include="skiplist.cpp" />
-    <ClCompile Include="skiplist_node.cpp" />
     <ClCompile Include="slice.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>

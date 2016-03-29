@@ -1,28 +1,39 @@
 #ifndef SKIPLIST_H
 #define SKIPLIST_H
-#include "skiplist_node.h"
+#include "slice.h"
 #include <iostream>
 #include <time.h>
-#include <stdlib.h>
+#include <fstream>
 
-class Skiplist 
+struct SkipListNode
+{
+	Slice slice;
+	SkipListNode** forward;
+};
+
+class SkipList
 {
 public:
-	SkiplistNode* list_header;
-	int list_level;
-	
-	Skiplist();
-	~Skiplist();
+	explicit SkipList(int max_level = 12);
+	~SkipList();
+
 	unsigned char* searchNode(unsigned char* key, int key_size);
 	bool insertNode(unsigned char* key, int key_size, unsigned char* value, int value_size);
 	bool deleteNode(unsigned char* key, int key_size);
+
+public:
 	void printList();
+	void printListToFile(const char* filename);
 
 private:
 	int seed;
+	int size;
+	int max_level;
+	SkipListNode* header;
+
+private:
 	int compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth_b);
-	int getRand(int min, int max);
-	int getInsertLevel();
+	int getLevel(int min, int max);
 	bool isEqual(unsigned char* a, unsigned char* b);
 
 };

@@ -1,170 +1,149 @@
-#include "skiplist.h"
+#include "SkipList.h"
 
-Skiplist::Skiplist() 
+SkipList::SkipList(int max_level) : header(NULL), size(0), max_level(max_level)
 {
-	seed = time(NULL);
-	list_header = new SkiplistNode;
-	list_level = 0;
-	list_header->slice = Slice();
-
-	for (int i = 0; i < MAX_LEVEL; i++) 
+	this->seed = time(NULL);
+	this->header = new SkipListNode;
+	this->header->forward = new SkipListNode*[this->max_level];
+	for (int level = 0; level < this->max_level; level++)
 	{
-		list_header->forward[i] = NULL;
+		this->header->forward[level] = NULL;
 	}
 }
 
-Skiplist::~Skiplist()
+SkipList::~SkipList()
 {
-	delete list_header;
+	while (this->header)
+	{
+		SkipListNode* node = this->header;
+		this->header = this->header->forward[0];
+		delete[] node->forward;
+		delete node;
+	}
 }
 
-int Skiplist::getInsertLevel()
+bool SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value, int value_size)
 {
-	int up_count = 1;
-	for (int i = 0; i < MAX_LEVEL; i++)
+	SkipListNode** update = new SkipListNode*[this->max_level];
+	SkipListNode* current = this->header;
+	for (int i = this->max_level - 1; i >= 0; --i)
 	{
-		int num = getRand(0, 10);
-		if (num < 5)
+		SkipListNode* next = NULL;
+		while ((next = current->forward[i]) && (compare(key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1))
 		{
-			up_count++;
+			current = next;
 		}
+		update[i] = current;
 	}
-	return --up_count;
+
+	bool is_find = (update[0]->forward[0] && compare(update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
+	if (!is_find)
+	{
+		SkipListNode* node = new SkipListNode;
+		node->slice = Slice(key, key_size, value, value_size);
+		int node_level = this->getLevel(1, 4);
+		if (node_level > this->max_level)
+		{
+			node_level = this->max_level;
+		}
+		node->forward = new SkipListNode*[node_level];
+		for (int i = 0; i < node_level; i++)
+		{
+			node->forward[i] = update[i]->forward[i];
+			update[i]->forward[i] = node;
+		}
+		this->size++;
+	}
+	else 
+	{
+		//输入错误
+	}
+	delete[] update;
+	return !is_find;
 }
 
-unsigned char* Skiplist::searchNode(unsigned char* key, int key_size)
+bool SkipList::deleteNode(unsigned char* key, int key_size)
 {
-	SkiplistNode* current = new SkiplistNode;
-	current = list_header;
-	for (int i = list_level - 1; i >= 0; i--)
+	SkipListNode** update = new SkipListNode*[this->max_level];
+	for (int i = this->max_level - 1; i >= 0; i--)
 	{
-		while (current->forward[i] != NULL)
+		SkipListNode* current = this->header;
+		SkipListNode* next = NULL;
+		while ((next = current->forward[i]) && (compare(key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1))
 		{
-			if (compare(key, key_size, current->forward[i]->slice.getKey(), current->forward[i]->slice.getKeySize()) == 0)
+			current = next;
+		}
+		update[i] = current;
+	}
+
+	bool is_find = (update[0]->forward[0] && compare(update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
+	if (is_find)
+	{
+		SkipListNode* find_node = update[0]->forward[0];
+		for (int i = 0; i < this->max_level; i++)
+		{
+			if (update[i]->forward[i] == find_node)
 			{
-				return current->forward[i]->slice.getValue();
+				update[i]->forward[i] = find_node->forward[i];
 			}
-			current = current->forward[i];
+			else
+			{
+				break;
+			}
+		}
+		
+		delete[] find_node->forward;
+		delete find_node;
+		this->size--;
+		return true;
+	}
+	else {
+		//输出信息
+		return false;
+	}
+}
+
+unsigned char* SkipList::searchNode(unsigned char* key, int key_size)
+{
+	SkipListNode* current = this->header;
+	for (int i = this->max_level - 1; i >= 0; i--)
+	{
+		SkipListNode* next = NULL;
+		while ((next = current->forward[i]) && compare(key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1)
+		{
+			current = next;
+		}
+		if (next && compare(next->slice.getKey(), next->slice.getKeySize(), key, key_size) == 0)
+		{
+			return next->slice.getValue();
 		}
 	}
 	return NULL;
 }
 
-
-bool Skiplist::insertNode(unsigned char* key, int key_size, unsigned char* value, int value_size)
+void SkipList::printList()
 {
-	
-
-	SkiplistNode* update[MAX_LEVEL];
-	SkiplistNode* current = new SkiplistNode;
-	current = list_header;
-	//从最底层查找需要插入的位置，并将位置写入update
-	for (int i = 0; i < MAX_LEVEL; i++)
+	SkipListNode* current = this->header;
+	for (int i = this->max_level - 1; i >= 0; i--)
 	{
-		while (current->forward[i] != NULL && compare(key, key_size, current->forward[i]->slice.getKey(), current->forward[i]->slice.getKeySize()) == 1)
-		{
-			current = current->forward[i];
-		}
-		update[i] = current;
-	}
-
-	//不能插入相同的值
-	if (current->forward[0] != NULL && isEqual(current->forward[0]->slice.getKey(), key))
-	{
-		std::string out_key((char*)key);
-		std::cout << std::endl;
-		std::cout << "insert key:" << out_key << " already existed" << std::endl;
-		return false;
-	}
-	//生成一个随机高度
-	int level = getInsertLevel();
-	SkiplistNode* node = new SkiplistNode;
-	node->slice = Slice(key, key_size, value, value_size);
-
-	//更新跳表的高度
-	if (level > this->list_level)
-	{
-		for (int i = this->list_level; i <= level; i++)
-		{
-			update[i] = this->list_header;
-		}
-		this->list_level = level;
-	}
-
-	//逐层更新节点的指针
-	for (int i = 0; i <= level; i++)
-	{
-		node->forward[i] = update[i]->forward[i];
-		update[i]->forward[i] = node;
-	}
-	return true;
-}
-
-bool Skiplist::deleteNode(unsigned char* key, int key_size)
-{
-	SkiplistNode* update[MAX_LEVEL];
-	SkiplistNode* current = new SkiplistNode;
-	current = this->list_header;
-
-	for (int i = 0; i < this->list_level; i++)
-	{
-		while (current->forward[i] != NULL && compare(key, key_size, current->forward[i]->slice.getKey(), current->forward[i]->slice.getKeySize()) == 1)
-		{
-			current = current->forward[i];
-		}
-		update[i] = current;
-	}
-
-	//开始删除
-	if (current->forward[0] != NULL && isEqual(current->forward[0]->slice.getKey(), key))
-	{
-		for (int i = 0; i < this->list_level; i++)
-		{
-			if (isEqual(update[i]->forward[i]->slice.getKey(), current->slice.getKey()))
-			{
-				update[i]->forward[i] = current->forward[i];
-			}
-		}
-		delete current;
-
-		for (int i = 0; i < this->list_level; i++)
-		{
-			if (this->list_header->forward[i] == NULL)
-			{
-				this->list_level--;
-			}
-		}
-		return true;
-	}
-	else
-	{
-		std::string out_key((char*)key);
-		std::cout << "delete key:" << out_key << "does not exited" << std::endl;
-		return false;
-	}
-}
-
-void Skiplist::printList()
-{
-	SkiplistNode* current = list_header;
-	for (int i = list_level; i >= 0; i--)
-	{
-		current = list_header;
+		SkipListNode* next = current->forward[i];
 		std::cout << "************level-" << i << "******************" << std::endl;
-		while (current->forward[i] != NULL)
+		while (next != NULL)
 		{
-			unsigned char* key = current->forward[i]->slice.getKey();
-			unsigned char* value = current->forward[i]->slice.getValue();
-			std::string key_s((char*)key);
-			std::string value_s((char*)value);
-			std::cout << key_s << ":" << value_s << "   ";
-			current = current->forward[i];
+			std::cout << next->slice.getKey() << "->" << next->slice.getValue() << "  ";
+			next = next->forward[i];
 		}
 		std::cout << std::endl;
 	}
 }
 
-int Skiplist::getRand(int min, int max)
+void SkipList::printListToFile(const char* filename)
+{
+
+
+}
+
+int SkipList::getLevel(int min, int max)
 {
 	srand(seed);
 	seed = rand();
@@ -172,7 +151,7 @@ int Skiplist::getRand(int min, int max)
 }
 
 
-int Skiplist::compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth_b)
+int SkipList::compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth_b)
 {
 	std::string s_a((char*)a);
 	std::string s_b((char*)b);
@@ -182,17 +161,22 @@ int Skiplist::compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth
 	{
 		size = lenth_b;
 	}
-	
+	bool flag = 0;
 	for (int i = 0; i < size; i++) {
-		if (a[i] > b[i])
+		if (a[i] == b[i])
+		{
+			flag++;
+		}
+		if (a[i] > b[i] && flag == i)
 		{
 			return 1;
 		}
+		
 	}
 	return -1;
 }
 
-bool Skiplist::isEqual(unsigned char* a, unsigned char* b)
+bool SkipList::isEqual(unsigned char* a, unsigned char* b)
 {
 	std::string s_a((char*)a);
 	std::string s_b((char*)b);
