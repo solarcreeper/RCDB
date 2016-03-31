@@ -1,8 +1,9 @@
 #include "SkipList.h"
 
-SkipList::SkipList(int max_level) : header(NULL), size(0), max_level(max_level)
+SkipList::SkipList(int max_level) : header(NULL), /*size(0),*/ max_level(max_level)
 {
 	this->seed = time(NULL);
+	srand(seed);
 	this->header = new SkipListNode;
 	this->header->forward = new SkipListNode*[this->max_level];
 	for (int level = 0; level < this->max_level; level++)
@@ -17,12 +18,21 @@ SkipList::~SkipList()
 	{
 		SkipListNode* node = this->header;
 		this->header = this->header->forward[0];
-		delete[] node->forward;
-		delete node;
+		if (node->forward != NULL)
+		{
+			delete[] node->forward;
+			node->forward = NULL;
+		}
+		if (node != NULL)
+		{
+			delete node;
+			node = NULL;
+		}
 	}
+	int b = 10;
 }
 
-bool SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value, int value_size)
+int SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value, int value_size)
 {
 	SkipListNode** update = new SkipListNode*[this->max_level];
 	SkipListNode* current = this->header;
@@ -37,32 +47,32 @@ bool SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value
 	}
 
 	bool is_find = (update[0]->forward[0] && compare(update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
+	int result = 0;
 	if (!is_find)
 	{
 		SkipListNode* node = new SkipListNode;
 		node->slice = Slice(key, key_size, value, value_size);
-		int node_level = this->getLevel(1, 4);
-		if (node_level > this->max_level)
-		{
-			node_level = this->max_level;
-		}
+		int node_level = this->getLevel(1, this->max_level);
+		 
 		node->forward = new SkipListNode*[node_level];
 		for (int i = 0; i < node_level; i++)
 		{
 			node->forward[i] = update[i]->forward[i];
 			update[i]->forward[i] = node;
 		}
-		this->size++;
+		//this->size++;
+		result = INSERT_VALUE_SUCCESS;
 	}
 	else 
 	{
-		//输入错误
+		update[0]->forward[0]->slice.setValue(value, value_size);
+		result = MODIFY_VALUE_SUCCESS;
 	}
 	delete[] update;
-	return !is_find;
+	return result;
 }
 
-bool SkipList::deleteNode(unsigned char* key, int key_size)
+int SkipList::deleteNode(unsigned char* key, int key_size)
 {
 	SkipListNode** update = new SkipListNode*[this->max_level];
 	for (int i = this->max_level - 1; i >= 0; i--)
@@ -79,7 +89,8 @@ bool SkipList::deleteNode(unsigned char* key, int key_size)
 	bool is_find = (update[0]->forward[0] && compare(update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
 	if (is_find)
 	{
-		SkipListNode* find_node = update[0]->forward[0];
+		update[0]->forward[0]->slice.delValue();
+		/*SkipListNode* find_node = update[0]->forward[0];
 		for (int i = 0; i < this->max_level; i++)
 		{
 			if (update[i]->forward[i] == find_node)
@@ -93,13 +104,13 @@ bool SkipList::deleteNode(unsigned char* key, int key_size)
 		}
 		
 		delete[] find_node->forward;
-		delete find_node;
-		this->size--;
-		return true;
+		delete find_node;*/
+		//this->size--;
+		return DELETE_VALUE_SUCCESS;
 	}
 	else {
 		//输出信息
-		return false;
+		return DELETE_VALUE_FAILED;
 	}
 }
 
@@ -139,13 +150,28 @@ void SkipList::printList()
 
 void SkipList::printListToFile(const char* filename)
 {
-
-
+	std::ofstream out(filename, std::ios::app);
+	SkipListNode* current = this->header;
+	out << "****************************************************************\n";
+	for (int i = this->max_level - 1; i >= 0; i--)
+	{
+		SkipListNode* next = current->forward[i];
+		out << "************level-" << i << "******************\n";
+		out << "*  ";
+		while (next != NULL)
+		{
+			out << next->slice.getKey() << "->" << next->slice.getValue() << "  ";
+			next = next->forward[i];
+		}
+		out << "\n";
+	}
+	out << "****************************************************************\n\n\n";
+	out.close();
 }
 
 int SkipList::getLevel(int min, int max)
 {
-	srand(seed);
+	//srand(seed);
 	seed = rand();
 	return (min + rand() % (max - min + 1));
 }
@@ -153,15 +179,37 @@ int SkipList::getLevel(int min, int max)
 
 int SkipList::compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth_b)
 {
-	std::string s_a((char*)a);
-	std::string s_b((char*)b);
-	if (s_a == s_b) return 0;
+
 	int size = lenth_a;
 	if (size > lenth_b)
 	{
 		size = lenth_b;
 	}
-	bool flag = 0;
+	for (int i = 0; i < size; i++)
+	{
+		if (a[i] < b[i])
+		{
+			return -1;
+		}
+		if (a[i] > b[i])
+		{
+			return 1;
+		}
+	}
+	if (lenth_a == lenth_b)
+	{
+		return 0;
+	}
+	if (lenth_a > lenth_b) 
+	{
+		return 1;
+	}
+	else
+	{
+		return -1;
+	}
+	
+	/*int flag = 0;
 	for (int i = 0; i < size; i++) {
 		if (a[i] == b[i])
 		{
@@ -171,18 +219,24 @@ int SkipList::compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth
 		{
 			return 1;
 		}
-		
+		if (a[i] < b[i] && flag == i)
+		{
+			return -1;
+		}
 	}
-	return -1;
-}
-
-bool SkipList::isEqual(unsigned char* a, unsigned char* b)
-{
-	std::string s_a((char*)a);
-	std::string s_b((char*)b);
-	if (s_a == s_b)
+	if (flag == size) 
 	{
-		return true;
-	}
-	return false;
+		if (lenth_a == lenth_b) 
+		{
+			return 0;
+		}
+		if (lenth_a > lenth_b)
+		{
+			return 1;
+		}
+		else
+		{
+			return -1;
+		}
+	}*/
 }

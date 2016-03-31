@@ -146,12 +146,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="helper.h" />
+    <ClInclude Include="mem_table.h" />
     <ClInclude Include="skiplist.h" />
     <ClInclude Include="slice.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="helper.cpp" />
+    <ClCompile Include="mem_table.cpp" />
     <ClCompile Include="skiplist.cpp" />
     <ClCompile Include="slice.cpp" />
     <ClCompile Include="test.cpp" />

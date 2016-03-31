@@ -11,6 +11,14 @@ struct SkipListNode
 	SkipListNode** forward;
 };
 
+enum OpResult
+{
+	DELETE_VALUE_SUCCESS,
+	DELETE_VALUE_FAILED,
+	INSERT_VALUE_SUCCESS,
+	MODIFY_VALUE_SUCCESS,
+};
+
 class SkipList
 {
 public:
@@ -18,8 +26,8 @@ public:
 	~SkipList();
 
 	unsigned char* searchNode(unsigned char* key, int key_size);
-	bool insertNode(unsigned char* key, int key_size, unsigned char* value, int value_size);
-	bool deleteNode(unsigned char* key, int key_size);
+	int insertNode(unsigned char* key, int key_size, unsigned char* value, int value_size);
+	int deleteNode(unsigned char* key, int key_size);
 
 public:
 	void printList();
@@ -27,14 +35,13 @@ public:
 
 private:
 	int seed;
-	int size;
+	//int size;
 	int max_level;
 	SkipListNode* header;
 
 private:
 	int compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth_b);
 	int getLevel(int min, int max);
-	bool isEqual(unsigned char* a, unsigned char* b);
 
 };
 #endif // !SKIPLIST_H

@@ -2,6 +2,7 @@
 
 Slice::Slice()
 {
+	this->is_deleted = false;
 	this->key = NULL;
 	this->value = NULL;
 	this->key_size = 0;
@@ -10,25 +11,32 @@ Slice::Slice()
 
 Slice::Slice(unsigned char* key, int key_size, unsigned char* value, int value_size)
 {
+	this->is_deleted = false;
 	this->key_size = key_size;
 	this->value_size = value_size;
 	this->key = new unsigned char[key_size];
 	memcpy(this->key, key, key_size);
-	//this->key[key_size] = '\0';
 	this->value = new unsigned char[value_size];
 	memcpy(this->value, value, value_size);
-	//this->value[value_size] = '\0';
 }
 
 Slice::~Slice() 
 {
-	delete[] key;
-	delete[] value;
-	
+	if (key != NULL)
+	{
+		delete[] key;
+		this->key = NULL;
+	}
+	if (value != NULL)
+	{
+ 		delete[] value;
+		this->value = NULL;
+	}
 }
 
 Slice& Slice::operator =(const Slice& slice)
 {
+	this->is_deleted = slice.is_deleted;
 	if (slice.key == NULL) {
 		this->key = NULL;
 		this->value = NULL;
@@ -56,8 +64,21 @@ Slice& Slice::operator =(const Slice& slice)
 	return *this;
 }
 
+void Slice::setValue(unsigned char* value, int size)
+{
+	this->value = value;
+	this->value_size = size;
+}
 
+void Slice::delValue()
+{
+	this->is_deleted = true;
+}
 
+void Slice::cancelDelValue()
+{
+	this->is_deleted = false;
+}
 
 unsigned char* Slice::getKey()
 {
