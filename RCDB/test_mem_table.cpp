@@ -2,9 +2,10 @@
 int main()
 {
 	srand(1);
-	const int size = 1000;
+	const int size = 100000;
 	unsigned char key[size][5];
 	unsigned char value[size][5];
+	MemTable* table = new MemTable();
 	for (int j = 0; j < 1; j++)
 	{
 		for (int i = 0; i < size; i++)
@@ -18,7 +19,6 @@ int main()
 			key[i][4] = '\0';
 			value[i][4] = '\0';
 		}
-		MemTable* table = new MemTable();
 
 		double start = clock();
 		for (int i = 0; i < size; i++)
@@ -34,7 +34,6 @@ int main()
 		}
 		double end2 = clock();
 		int total2 = end2 - end1;
-		delete table;
 	}
 	return 1;
 }

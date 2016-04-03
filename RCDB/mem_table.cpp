@@ -44,11 +44,20 @@ int MemTable::put(unsigned char* key, int key_size, unsigned char* value, int va
 		if (this->size == MAX)
 		{
 			//当一个表存满了之后
-			this->current_table = !this->current_table;
+			if (this->current_table)
+			{
+
+				delete this->mem_table1;
+				mem_table1 = new SkipList(100);
+			}
+			else
+			{
+				delete this->mem_table2;
+				mem_table2 = new SkipList(100);
+			}
 			this->size = 0;
-			/*delete table;
-			table = NULL;
-			table = new SkipList(100);*/
+			
+			this->current_table = !this->current_table;
 		}
 	}
 	if (result == DELETE_VALUE_SUCCESS)

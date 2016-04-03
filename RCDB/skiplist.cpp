@@ -47,7 +47,7 @@ int SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value,
 	}
 
 	bool is_find = (update[0]->forward[0] && compare(update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
-	int result = 0;
+	int result = -1;
 	if (!is_find)
 	{
 		SkipListNode* node = new SkipListNode;
@@ -60,7 +60,6 @@ int SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value,
 			node->forward[i] = update[i]->forward[i];
 			update[i]->forward[i] = node;
 		}
-		//this->size++;
 		result = INSERT_VALUE_SUCCESS;
 	}
 	else 
@@ -87,31 +86,23 @@ int SkipList::deleteNode(unsigned char* key, int key_size)
 	}
 
 	bool is_find = (update[0]->forward[0] && compare(update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
+	int result = -1;
 	if (is_find)
 	{
-		update[0]->forward[0]->slice.delValue();
-		/*SkipListNode* find_node = update[0]->forward[0];
-		for (int i = 0; i < this->max_level; i++)
+		if (update[0]->forward[0]->slice.isDeleted())
 		{
-			if (update[i]->forward[i] == find_node)
-			{
-				update[i]->forward[i] = find_node->forward[i];
-			}
-			else
-			{
-				break;
-			}
+			result= DELETE_VALUE_FAILED;
 		}
+		update[0]->forward[0]->slice.delValue();
 		
-		delete[] find_node->forward;
-		delete find_node;*/
-		//this->size--;
-		return DELETE_VALUE_SUCCESS;
+		result = DELETE_VALUE_SUCCESS;
 	}
 	else {
 		// ‰≥ˆ–≈œ¢
-		return DELETE_VALUE_FAILED;
+		result = DELETE_VALUE_FAILED;
 	}
+	delete[] update;
+	return result;
 }
 
 unsigned char* SkipList::searchNode(unsigned char* key, int key_size)
@@ -208,35 +199,4 @@ int SkipList::compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth
 	{
 		return -1;
 	}
-	
-	/*int flag = 0;
-	for (int i = 0; i < size; i++) {
-		if (a[i] == b[i])
-		{
-			flag++;
-		}
-		if (a[i] > b[i] && flag == i)
-		{
-			return 1;
-		}
-		if (a[i] < b[i] && flag == i)
-		{
-			return -1;
-		}
-	}
-	if (flag == size) 
-	{
-		if (lenth_a == lenth_b) 
-		{
-			return 0;
-		}
-		if (lenth_a > lenth_b)
-		{
-			return 1;
-		}
-		else
-		{
-			return -1;
-		}
-	}*/
 }

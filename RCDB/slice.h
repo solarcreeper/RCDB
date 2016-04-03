@@ -11,6 +11,7 @@ public:
 	unsigned char* getValue();
 	void setValue(unsigned char* value, int size);
 	void delValue();
+	bool isDeleted();
 	void cancelDelValue();
 	int getKeySize();
 	int getValueSize();

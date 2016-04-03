@@ -149,12 +149,16 @@
     <ClInclude Include="mem_table.h" />
     <ClInclude Include="skiplist.h" />
     <ClInclude Include="slice.h" />
+    <ClInclude Include="sstable.h" />
+    <ClInclude Include="sstable_block.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mem_table.cpp" />
     <ClCompile Include="skiplist.cpp" />
     <ClCompile Include="slice.cpp" />
-    <ClCompile Include="test.cpp" />
+    <ClCompile Include="sstable.cpp" />
+    <ClCompile Include="sstable_block.cpp" />
+    <ClCompile Include="test_sstable.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

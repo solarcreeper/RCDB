@@ -66,13 +66,18 @@ Slice& Slice::operator =(const Slice& slice)
 
 void Slice::setValue(unsigned char* value, int size)
 {
-	this->value = value;
+	memcpy(this->value, value, value_size);
 	this->value_size = size;
 }
 
 void Slice::delValue()
 {
 	this->is_deleted = true;
+}
+
+bool Slice::isDeleted()
+{
+	return this->is_deleted;
 }
 
 void Slice::cancelDelValue()
