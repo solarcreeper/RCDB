@@ -3,8 +3,7 @@
 int main()
 {
 	srand(time(0));
-	int x = 25 * 25 * 25;
-	const int size = 100000;
+	const int size = 5;
 	unsigned char key[size][5];
 	unsigned char value[size][5];
 	for (int i = 0; i < size; i++)
@@ -19,7 +18,7 @@ int main()
 		value[i][4] = '\0';
 	}
 
-	SkipList* list = new SkipList(1111);
+	SkipList* list = new SkipList(4);
 	double start = clock();
 	for (int i = 0; i < size; i++)
 	{
@@ -34,6 +33,16 @@ int main()
 	}
 	double end2 = clock();
 	int total2 = end2 - end1;
+
+	list->printList();
+	SkipList::iterator ita;
+	ita = list->Begin();
+	Slice a;
+	while (!ita.isEmpty())
+	{
+		a = ita.next();
+	}
+
 	return 1;
 }
 

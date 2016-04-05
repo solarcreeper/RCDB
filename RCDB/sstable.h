@@ -3,7 +3,15 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-struct SSTableList;
+struct SSTableList
+{
+	unsigned char* start;
+	int filename;
+	int start_length;
+
+	SSTableList* next;
+};
+
 
 class SSTable
 {

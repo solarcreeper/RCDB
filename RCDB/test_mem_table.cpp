@@ -2,7 +2,7 @@
 int main()
 {
 	srand(1);
-	const int size = 100000;
+	const int size = 100;
 	unsigned char key[size][5];
 	unsigned char value[size][5];
 	MemTable* table = new MemTable();
@@ -35,6 +35,7 @@ int main()
 		double end2 = clock();
 		int total2 = end2 - end1;
 	}
+
 	return 1;
 }
 

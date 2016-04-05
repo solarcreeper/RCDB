@@ -1,9 +1,9 @@
 #ifndef MEM_TABLE_H
 #define MEM_TABLE_H
 #include "skiplist.h"
-#define MAX 10000
+#include <fstream>
 
-
+#define MAX 2
 
 class MemTable
 {
@@ -14,11 +14,11 @@ public:
 	unsigned char* get(unsigned char* key, int key_size);
 	
 public:
+	void saveMemtable();
 
 private:
-	int size;
-	
 	bool current_table;
+
 	SkipList *mem_table1;
 	SkipList *mem_table2;
 };

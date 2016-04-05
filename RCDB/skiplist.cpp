@@ -3,6 +3,7 @@
 SkipList::SkipList(int max_level) : header(NULL), /*size(0),*/ max_level(max_level)
 {
 	this->seed = time(NULL);
+	this->size = 0;
 	srand(seed);
 	this->header = new SkipListNode;
 	this->header->forward = new SkipListNode*[this->max_level];
@@ -29,7 +30,8 @@ SkipList::~SkipList()
 			node = NULL;
 		}
 	}
-	int b = 10;
+	delete this->header;
+	this->header = NULL;
 }
 
 int SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value, int value_size)
@@ -61,6 +63,7 @@ int SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value,
 			update[i]->forward[i] = node;
 		}
 		result = INSERT_VALUE_SUCCESS;
+		this->size++;
 	}
 	else 
 	{
@@ -93,9 +96,11 @@ int SkipList::deleteNode(unsigned char* key, int key_size)
 		{
 			result= DELETE_VALUE_FAILED;
 		}
-		update[0]->forward[0]->slice.delValue();
-		
-		result = DELETE_VALUE_SUCCESS;
+		else
+		{
+			update[0]->forward[0]->slice.delValue();
+			result = DELETE_VALUE_SUCCESS;
+		}
 	}
 	else {
 		//Êä³öÐÅÏ¢
@@ -105,7 +110,7 @@ int SkipList::deleteNode(unsigned char* key, int key_size)
 	return result;
 }
 
-unsigned char* SkipList::searchNode(unsigned char* key, int key_size)
+Slice SkipList::searchNode(unsigned char* key, int key_size)
 {
 	SkipListNode* current = this->header;
 	for (int i = this->max_level - 1; i >= 0; i--)
@@ -117,10 +122,10 @@ unsigned char* SkipList::searchNode(unsigned char* key, int key_size)
 		}
 		if (next && compare(next->slice.getKey(), next->slice.getKeySize(), key, key_size) == 0)
 		{
-			return next->slice.getValue();
+			return next->slice;
 		}
 	}
-	return NULL;
+	return Slice();
 }
 
 void SkipList::printList()
@@ -158,6 +163,16 @@ void SkipList::printListToFile(const char* filename)
 	}
 	out << "****************************************************************\n\n\n";
 	out.close();
+}
+
+int SkipList::getSize()
+{
+	return this->size;
+}
+
+SkipListNode* SkipList::Begin()
+{
+	return this->header;
 }
 
 int SkipList::getLevel(int min, int max)

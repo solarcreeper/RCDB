@@ -30,6 +30,9 @@
     <ClInclude Include="sstable_block.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="sstable_filter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="slice.cpp">
@@ -44,10 +47,13 @@
     <ClCompile Include="sstable.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test_sstable.cpp">
+    <ClCompile Include="sstable_block.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="sstable_block.cpp">
+    <ClCompile Include="test_mem_table.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="sstable_filter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -37,8 +37,16 @@ Slice::~Slice()
 Slice& Slice::operator =(const Slice& slice)
 {
 	this->is_deleted = slice.is_deleted;
-	if (slice.key == NULL) {
+	if (slice.key == NULL || slice.value == NULL) {
+		if (this->key != NULL)
+		{
+			delete[] this->key;
+		}
 		this->key = NULL;
+		if (this->value != NULL)
+		{
+			delete[] this->value;
+		}
 		this->value = NULL;
 		this->key_size = 0;
 		this->value_size = 0;
@@ -47,10 +55,12 @@ Slice& Slice::operator =(const Slice& slice)
 	if (this->key != NULL)
 	{
 		delete[] key;
+		key = NULL;
 	}
 	if (this->value != NULL)
 	{
 		delete[] value;
+		value = NULL;
 	}
 
  	this->key_size = slice.key_size;

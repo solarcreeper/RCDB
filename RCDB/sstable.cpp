@@ -1,14 +1,6 @@
 #include "sstable.h"
 #define FILE_URL "./data/data_index.dat"
 
-struct SSTableList
-{
-	unsigned char* start;
-	int filename;
-	int start_length;
-
-	SSTableList* next;
-};
 
 SSTable::SSTable()
 {
@@ -25,28 +17,13 @@ SSTable::SSTable()
 	{
 		initIdx();
 	}
-	//tset
-	//const int size = 2;
-	//this->index_size = 1;
-	//index->index_node.start_length = size;
-	//index->index_node.file_length = size + 1;
-	//index->index_node.start = new unsigned char[size];
-	//index->index_node.filename = new unsigned char[size + 1];
-	//for (int i = 0; i < size - 1; i++)
-	//{
-	//	index->index_node.start[i] = 'a';
-	//	index->index_node.filename[i] = 'a';
-	//}
-	//index->index_node.start[size -1] = '\0';
-	//index->index_node.filename[size] = '\0';
-	//index->index_node.filename[size - 1] = 'b';
 }
 
 SSTable::~SSTable()
 {
-	while (this->index)
+	while (this->index->next)
 	{
-		SSTableList* node = this->index;
+		SSTableList* node = this->index->next;
 		if (node != NULL)
 		{
 			delete[] node->start;
@@ -56,6 +33,7 @@ SSTable::~SSTable()
 		}
 		this->index = this->index->next;
 	}
+	delete this->index;
 }
 
 bool SSTable::readIdx()
@@ -85,10 +63,6 @@ bool SSTable::readIdx()
 		list = list->next;
 	}
 
-	//testinfo
-	long pos = file.tellg();
-
-
 	list = this->index->next;
 	for (int i = 0; i < this->index_size; i++)
 	{
@@ -100,7 +74,6 @@ bool SSTable::readIdx()
 		list = list->next;
 
 		delete[] start;
-		pos = file.tellg();
 	}
 
 	
@@ -117,7 +90,7 @@ bool SSTable::saveIdx()
 		return false;
 	}
 
-	file.write((char*)&this->index_size, sizeof(int));
+ 	file.write((char*)&this->index_size, sizeof(int));
 	SSTableList* list = this->index;
 	
 	int start_index_length = 0;
