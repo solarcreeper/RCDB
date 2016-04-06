@@ -50,21 +50,34 @@ private:
 	class List_Iterator
 	{
 		SkipListNode* curr;
+		SkipListNode* head;
 		Slice p;
 	public:
 		void operator =(SkipListNode* ptr)
 		{
 			curr = ptr;
+			head = ptr;
 			p = Slice();
 		}
 
-		void operator ++()
+		Slice& pre()
 		{
-			if (curr->forward[0])
+			p = Slice();
+			if (curr == head || head->forward[0] == curr)
 			{
-				curr = curr->forward[0]->forward[0];
+				curr = head;
+				return p;
 			}
+			SkipListNode* it = head->forward[0];
+			while (it->forward[0] != curr)
+			{
+				it = it->forward[0];
+			}
+			p = it->slice;
+			curr = it;
+			return p;
 		}
+
 		Slice& next()
 		{
 			p = Slice();

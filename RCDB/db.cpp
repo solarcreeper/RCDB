@@ -29,6 +29,7 @@ DB::~DB()
 
 Slice DB::get(unsigned char* key, int key_size)
 {
+	Slice slice;
 	slice = this->mem_table->get(key, key_size);
 	if (slice.getKeySize() == 0)
 	{
@@ -52,6 +53,27 @@ bool DB::put(unsigned char* key, int key_size, unsigned char* value, int value_s
 	return true;
 }
 
+bool DB::puts(unsigned char* key[], int key_size[], unsigned char* value[], int value_size[])
+{
+	this->mem_table_ = new MemTable();
+	
+	bool flag = true;
+	for (int i = 0; i < 100; i++)
+	{
+		if (!false)
+		{
+			flag = false;
+			break;
+		}
+	}
+	if (flag)
+	{
+		//push data;
+	}
+	delete this->mem_table_;
+	this->mem_table_ = NULL;
+	return false;
+}
 void DB::saveMemTable()
 {
 	std::thread t1(&MemTable::saveMemtable, this->mem_table, &this->write_table_done);

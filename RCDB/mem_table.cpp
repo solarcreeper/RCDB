@@ -51,10 +51,8 @@ Slice MemTable::get(unsigned char* key, int key_size)
 		slice = this->mem_table1->searchNode(key, key_size);
 		if (slice.getKeySize() == 0)
 		{
-			return Slice(this->mem_table2->searchNode(key, key_size).getKey(),
-				this->mem_table2->searchNode(key, key_size).getKeySize(),
-				this->mem_table2->searchNode(key, key_size).getValue(),
-				this->mem_table2->searchNode(key, key_size).getValueSize());
+			Slice s = this->mem_table2->searchNode(key, key_size);
+			return Slice(s.getKey(),s.getKeySize(),s.getValue(),s.getValueSize());
 		}
 		else
 		{
@@ -65,10 +63,8 @@ Slice MemTable::get(unsigned char* key, int key_size)
 		slice = this->mem_table2->searchNode(key, key_size);
 		if (slice.getKeySize() == 0)
 		{
-			return Slice(this->mem_table1->searchNode(key, key_size).getKey(),
-				this->mem_table1->searchNode(key, key_size).getKeySize(),
-				this->mem_table1->searchNode(key, key_size).getValue(),
-				this->mem_table1->searchNode(key, key_size).getValueSize());
+			Slice s = this->mem_table1->searchNode(key, key_size);
+			return Slice(s.getKey(), s.getKeySize(), s.getValue(), s.getValueSize());
 		}
 		else {
 			return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
@@ -78,6 +74,25 @@ Slice MemTable::get(unsigned char* key, int key_size)
 
 void MemTable::saveMemtable(bool* write_table_done)
 {
+	if (!this->current_table)
+	{
+		if (this->mem_table2)
+		{
+			delete this->mem_table2;
+			this->mem_table2 = NULL;
+		}
+		mem_table2 = new SkipList(this->level);
+	}
+	else
+	{
+		if (this->mem_table1)
+		{
+			delete this->mem_table1;
+			this->mem_table1 = NULL;
+		}
+		mem_table1 = new SkipList(this->level);
+	}
+
 	std::ofstream file(this->mem_table_path, std::ios::binary);
 	if (!file)
 	{
@@ -123,17 +138,7 @@ void MemTable::saveMemtable(bool* write_table_done)
 		delete[] value;
 	}
 	file.close();
-
-	if (!this->current_table)
-	{
-		delete this->mem_table1;
-		mem_table1 = new SkipList(this->level);
-	}
-	else
-	{
-		delete this->mem_table2;
-		mem_table2 = new SkipList(this->level);
-	}
+	
 	*write_table_done = true;
 	return;
 }

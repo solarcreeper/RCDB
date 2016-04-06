@@ -38,11 +38,12 @@ int main()
 	SkipList::iterator ita;
 	ita = list->Begin();
 	Slice a;
-	while (!ita.isEmpty())
-	{
-		a = ita.next();
-	}
-
+ 	a = ita.next();
+	a = ita.next();
+	a = ita.pre();
+	a = ita.pre();
+	a = ita.pre();
+	a = ita.next();
 	return 1;
 }
 

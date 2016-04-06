@@ -21,17 +21,18 @@ SSTable::SSTable(std::string file_url)
 
 SSTable::~SSTable()
 {
-	while (this->index->next)
+	SSTableList *node = this->index->next;
+	while (node)
 	{
-		SSTableList* node = this->index->next;
-		if (node != NULL)
+		SSTableList* re = node;
+		node = node->next;
+		if (re != NULL)
 		{
-			delete[] node->start;
-			node->start = NULL;
-			delete node;
-			node = NULL;
+			delete[] re->start;
+			re->start = NULL;
+			delete re;
+			re = NULL;
 		}
-		this->index = this->index->next;
 	}
 	delete this->index;
 }

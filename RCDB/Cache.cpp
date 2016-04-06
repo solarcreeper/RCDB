@@ -79,7 +79,7 @@ Slice Cache::getFromFile(unsigned char* key, int key_size, std::string filename)
 	Slice result;
 	result = block_data->searchNode(key, key_size);
 
-	this->cache_index++;
+	this->curr_block++;
 	if (this->curr_block == CACHE_SIZE)
 	{
 		this->curr_block = 0;
