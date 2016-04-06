@@ -10,7 +10,7 @@ public:
 	SSTableFilter(std::string data_file = "mem_table.dat", std::string index_file = "data_index.dat", std::string path = "./data");
 	~SSTableFilter();
 
-	void filter();
+	void filter(bool* write_table_done);
 private:
 	SSTableBlock* data_to_save;
 	SSTable* index_table;
@@ -18,5 +18,6 @@ private:
 
 private:
 	std::string path;
+	std::string data_file;
 };
 #endif // !SSTABLE_FILTER_H

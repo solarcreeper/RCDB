@@ -65,13 +65,13 @@
     <ClCompile Include="Cache.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test_cache.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="db.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="options.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_db.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

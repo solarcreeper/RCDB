@@ -8,22 +8,22 @@
 class DB
 {
 public:
-	DB(Options option);
+	DB(Options option = Options());
 	~DB();
 
-	unsigned char* get(unsigned char* key, int key_size);
+	Slice get(unsigned char* key, int key_size);
 	bool put(unsigned char* key, int key_size, unsigned char* value, int value_size);
 
 private:
 	void saveMemTable();
-
+	void filterData();
 private:
 	Cache* cache;
 	MemTable* mem_table;
 	SSTableFilter* filter;
 private:
 	Slice slice;
-
+	bool write_table_done;
 
 };
 

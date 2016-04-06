@@ -6,7 +6,7 @@
 class Cache
 {
 public:
-	Cache(std::string sstable_url, std::string sstable_block_path);
+	Cache(std::string sstable_url = "./data/data_index.dat", std::string sstable_block_path = "./data/");
 	~Cache();
 
 	Slice get(unsigned char* key, int key_size);

@@ -1,6 +1,6 @@
 #include "mem_table.h"
 
-MemTable::MemTable(int level = 100, int mem_table_max = 1000, std::string mem_table_path = "./data/mem_table.dat")
+MemTable::MemTable(int level, int mem_table_max, std::string mem_table_path)
 {
 	this->mem_table_path = mem_table_path;
 	this->level = level;
@@ -76,7 +76,7 @@ Slice MemTable::get(unsigned char* key, int key_size)
 	}
 }
 
-void MemTable::saveMemtable()
+void MemTable::saveMemtable(bool* write_table_done)
 {
 	std::ofstream file(this->mem_table_path, std::ios::binary);
 	if (!file)
@@ -134,6 +134,7 @@ void MemTable::saveMemtable()
 		delete this->mem_table2;
 		mem_table2 = new SkipList(this->level);
 	}
+	*write_table_done = true;
 	return;
 }
 

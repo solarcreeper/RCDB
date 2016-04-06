@@ -67,12 +67,13 @@ private:
 		}
 		Slice& next()
 		{
+			p = Slice();
 			if (curr->forward[0])
 			{
-				this->p = curr->forward[0]->slice;
+				p = curr->forward[0]->slice;
 				curr = curr->forward[0];
-				return this->p;
 			}
+			return p;
 		}
 
 		bool isEmpty()

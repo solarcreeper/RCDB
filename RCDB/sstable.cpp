@@ -1,7 +1,7 @@
 #include "sstable.h"
 
 
-SSTable::SSTable(std::string file_url = "./data/data_index.dat")
+SSTable::SSTable(std::string file_url)
 {
 	this->file_url = file_url;
 	this->index = new SSTableList;

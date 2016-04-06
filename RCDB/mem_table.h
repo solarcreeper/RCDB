@@ -14,7 +14,7 @@ public:
 	Slice get(unsigned char* key, int key_size);
 	
 public:
-	void saveMemtable();
+	void saveMemtable(bool* write_table_done);
 	bool isTableFull();
 	void setTableMutex();
 private:

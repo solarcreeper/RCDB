@@ -1,6 +1,6 @@
 #include "SkipList.h"
 
-SkipList::SkipList(int max_level = 100)
+SkipList::SkipList(int max_level)
 {
 	this->seed = time(NULL);
 	this->size = 0;

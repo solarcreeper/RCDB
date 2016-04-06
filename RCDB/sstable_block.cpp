@@ -1,6 +1,6 @@
 #include "sstable_block.h"
 
-SSTableBlock::SSTableBlock(std::string filename, std::string path = "./data/")
+SSTableBlock::SSTableBlock(std::string filename, std::string path)
 {
 	this->file_url = path + filename;
 	this->filename = filename;
@@ -16,14 +16,16 @@ SSTableBlock::SSTableBlock(std::string filename, std::string path = "./data/")
 
 SSTableBlock::~SSTableBlock()
 {
-	while (this->list_node->next)
+	if (this->list_node)
 	{
-		delete this->list_node->next;
-		this->list_node->next = NULL;
-		this->list_node = this->list_node->next;
+		delete this->list_node;
+		this->list_node = NULL;
 	}
-	delete this->list_node;
-	this->list_node = NULL;
+	if (this->block)
+	{
+		delete this->block;
+		this->block = NULL;
+	}
 }
 
 void SSTableBlock::readBlock()
