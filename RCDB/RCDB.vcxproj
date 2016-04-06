@@ -146,7 +146,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="cache.h" />
+    <ClInclude Include="db.h" />
     <ClInclude Include="mem_table.h" />
+    <ClInclude Include="options.h" />
     <ClInclude Include="skiplist.h" />
     <ClInclude Include="slice.h" />
     <ClInclude Include="sstable.h" />
@@ -154,13 +157,16 @@
     <ClInclude Include="sstable_filter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Cache.cpp" />
+    <ClCompile Include="db.cpp" />
     <ClCompile Include="mem_table.cpp" />
+    <ClCompile Include="options.cpp" />
     <ClCompile Include="skiplist.cpp" />
     <ClCompile Include="slice.cpp" />
     <ClCompile Include="sstable.cpp" />
     <ClCompile Include="sstable_block.cpp" />
     <ClCompile Include="sstable_filter.cpp" />
-    <ClCompile Include="test_mem_table.cpp" />
+    <ClCompile Include="test_cache.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

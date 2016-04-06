@@ -1,10 +1,11 @@
 #include "SkipList.h"
 
-SkipList::SkipList(int max_level) : header(NULL), /*size(0),*/ max_level(max_level)
+SkipList::SkipList(int max_level = 100)
 {
 	this->seed = time(NULL);
 	this->size = 0;
 	srand(seed);
+	this->max_level = max_level;
 	this->header = new SkipListNode;
 	this->header->forward = new SkipListNode*[this->max_level];
 	for (int level = 0; level < this->max_level; level++)
@@ -122,7 +123,7 @@ Slice SkipList::searchNode(unsigned char* key, int key_size)
 		}
 		if (next && compare(next->slice.getKey(), next->slice.getKeySize(), key, key_size) == 0)
 		{
-			return next->slice;
+			return Slice(next->slice.getKey(), next->slice.getKeySize(), next->slice.getValue(), next->slice.getValueSize());
 		}
 	}
 	return Slice();

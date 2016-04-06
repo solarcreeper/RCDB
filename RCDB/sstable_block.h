@@ -14,19 +14,24 @@ struct SSTableBlockNode
 class SSTableBlock
 {
 public:
-	SSTableBlock(std::string filename);
+	SSTableBlock(std::string filename, std::string path = "./data/");
 	~SSTableBlock();
 
 	void readBlock();
 	void saveBlock();
-	int addRecord(Slice slice);
+	int addRecord(Slice& slice);
+	std::string getFilename();
+
+public:
+	void readMemTable();
+	SkipList* getBlock();
 
 private:
 	SSTableBlockNode* list_node;
 	SkipList* block;
 	int size;
+private:
 	std::string filename;
-	
-
+	std::string file_url;
  };
 #endif // !SSTABLE_BLOCK_H

@@ -33,6 +33,15 @@
     <ClInclude Include="sstable_filter.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="cache.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="db.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="options.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="slice.cpp">
@@ -50,10 +59,19 @@
     <ClCompile Include="sstable_block.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test_mem_table.cpp">
+    <ClCompile Include="sstable_filter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="sstable_filter.cpp">
+    <ClCompile Include="Cache.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_cache.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="db.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="options.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

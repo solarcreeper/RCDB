@@ -1,9 +1,12 @@
 #include "mem_table.h"
 
-MemTable::MemTable()
+MemTable::MemTable(int level = 100, int mem_table_max = 1000, std::string mem_table_path = "./data/mem_table.dat")
 {
-	this->mem_table1 = new SkipList(100);
-	this->mem_table2 = new SkipList(100);
+	this->mem_table_path = mem_table_path;
+	this->level = level;
+	this->mem_table_max = mem_table_max;
+	this->mem_table1 = new SkipList(level);
+	this->mem_table2 = new SkipList(level);
 	this->current_table = true;
 }
 
@@ -37,47 +40,45 @@ int MemTable::put(unsigned char* key, int key_size, unsigned char* value, int va
 	{
 		result = table->insertNode(key, key_size, value, value_size);
 	}
-	if (result == INSERT_VALUE_SUCCESS)
-	{
-		if (table->getSize() == MAX)
-		{
-			this->current_table = !this->current_table;
-			//new thread to save 
-			saveMemtable();
-		}
-	}
 	return result;
 }
 
-unsigned char* MemTable::get(unsigned char* key, int key_size)
+Slice MemTable::get(unsigned char* key, int key_size)
 {
+	Slice slice;
 	if (this->current_table)
 	{
-		unsigned char* result = this->mem_table1->searchNode(key, key_size).getValue();
-		if (result == NULL)
+		slice = this->mem_table1->searchNode(key, key_size);
+		if (slice.getKeySize() == 0)
 		{
-			return this->mem_table2->searchNode(key, key_size).getValue();
+			return Slice(this->mem_table2->searchNode(key, key_size).getKey(),
+				this->mem_table2->searchNode(key, key_size).getKeySize(),
+				this->mem_table2->searchNode(key, key_size).getValue(),
+				this->mem_table2->searchNode(key, key_size).getValueSize());
 		}
 		else
 		{
-			return result;
+			return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
 		}
 	}
 	else {
-		unsigned char* result = this->mem_table2->searchNode(key, key_size).getValue();
-		if (result == NULL)
+		slice = this->mem_table2->searchNode(key, key_size);
+		if (slice.getKeySize() == 0)
 		{
-			return this->mem_table1->searchNode(key, key_size).getValue();
+			return Slice(this->mem_table1->searchNode(key, key_size).getKey(),
+				this->mem_table1->searchNode(key, key_size).getKeySize(),
+				this->mem_table1->searchNode(key, key_size).getValue(),
+				this->mem_table1->searchNode(key, key_size).getValueSize());
 		}
 		else {
-			return result;
+			return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
 		}
 	}
 }
 
 void MemTable::saveMemtable()
 {
-	std::ofstream file("./data/mem_table.dat", std::ios::binary);
+	std::ofstream file(this->mem_table_path, std::ios::binary);
 	if (!file)
 	{
 		return;
@@ -126,12 +127,26 @@ void MemTable::saveMemtable()
 	if (!this->current_table)
 	{
 		delete this->mem_table1;
-		mem_table1 = new SkipList(100);
+		mem_table1 = new SkipList(this->level);
 	}
 	else
 	{
 		delete this->mem_table2;
-		mem_table2 = new SkipList(100);
+		mem_table2 = new SkipList(this->level);
 	}
 	return;
+}
+
+bool MemTable::isTableFull()
+{
+	if (current_table)
+	{
+		return (mem_table1->getSize() == this->mem_table_max);
+	}
+	return (mem_table2->getSize() == this->mem_table_max);
+}
+
+void MemTable::setTableMutex()
+{
+	this->current_table = !this->current_table;
 }

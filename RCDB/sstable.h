@@ -16,7 +16,7 @@ struct SSTableList
 class SSTable
 {
 public:
-	SSTable();
+	SSTable(std::string file_url = "./data/data_index.dat");
 	~SSTable();
 
 	bool readIdx();
@@ -26,10 +26,12 @@ public:
 private:
 	SSTableList* index;
 	int index_size;
+	std::string file_url;
 
 private:
 	void initIdx();
 	int compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth_b);
 	bool isEqual(unsigned char* start, int start_length, unsigned char* b, int length_b);
+
 };
 #endif // !SSTABLE_H

@@ -1,15 +1,15 @@
 #include "sstable.h"
-#define FILE_URL "./data/data_index.dat"
 
 
-SSTable::SSTable()
+SSTable::SSTable(std::string file_url = "./data/data_index.dat")
 {
+	this->file_url = file_url;
 	this->index = new SSTableList;
 	this->index->next = NULL;
 	this->index_size = 0;
 	
 	//create file if not exist
-	std::ofstream file(FILE_URL, std::ios::binary | std::ios::app);
+	std::ofstream file(this->file_url, std::ios::binary | std::ios::app);
 	file.close();
 
 	readIdx();
@@ -38,7 +38,7 @@ SSTable::~SSTable()
 
 bool SSTable::readIdx()
 {
-	std::ifstream file(FILE_URL, std::ios::binary);
+	std::ifstream file(this->file_url, std::ios::binary);
 	if (!file)
 	{
 		return false;
@@ -84,7 +84,7 @@ bool SSTable::readIdx()
 
 bool SSTable::saveIdx()
 {
-	std::ofstream file(FILE_URL, std::ios::binary);
+	std::ofstream file(this->file_url, std::ios::binary);
 	if (!file)
 	{
 		return false;
@@ -161,12 +161,12 @@ std::string SSTable::getFilename(unsigned char* start, int length)
 
 void SSTable::initIdx()
 {
-	std::ofstream file(FILE_URL, std::ios::binary);
+	std::ofstream file(this->file_url, std::ios::binary);
 	if (!file)
 	{
 		return;
 	}
-	this->index_size = 2;
+	this->index_size = 255;
 	file.write((char *)&this->index_size, sizeof(int));
 
 	unsigned char* start = new unsigned char[2];
@@ -226,9 +226,16 @@ bool SSTable::isEqual(unsigned char* start, int start_length, unsigned char* b, 
 	{
 		size = start_length;
 	}
-	if (compare(start, size, b, size) == 0)
+	//避免比较文件结束符的0
+	size = size - 1;
+	for (int i = 0; i < size; i++)
 	{
-		return true;
+		int left = start[i];
+		int right = b[i];
+		if (left != right)
+		{
+			return false;
+		}
 	}
-	return false;
+	return true;
 }
