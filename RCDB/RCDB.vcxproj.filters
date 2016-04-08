@@ -42,6 +42,12 @@
     <ClInclude Include="options.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="snapshot.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="slicelist.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="slice.cpp">
@@ -71,7 +77,13 @@
     <ClCompile Include="options.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test_db.cpp">
+    <ClCompile Include="snapshot.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_snapshot.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="slicelist.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

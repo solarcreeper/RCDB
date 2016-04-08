@@ -152,6 +152,8 @@
     <ClInclude Include="options.h" />
     <ClInclude Include="skiplist.h" />
     <ClInclude Include="slice.h" />
+    <ClInclude Include="slicelist.h" />
+    <ClInclude Include="snapshot.h" />
     <ClInclude Include="sstable.h" />
     <ClInclude Include="sstable_block.h" />
     <ClInclude Include="sstable_filter.h" />
@@ -163,10 +165,12 @@
     <ClCompile Include="options.cpp" />
     <ClCompile Include="skiplist.cpp" />
     <ClCompile Include="slice.cpp" />
+    <ClCompile Include="slicelist.cpp" />
+    <ClCompile Include="snapshot.cpp" />
     <ClCompile Include="sstable.cpp" />
     <ClCompile Include="sstable_block.cpp" />
     <ClCompile Include="sstable_filter.cpp" />
-    <ClCompile Include="test_db.cpp" />
+    <ClCompile Include="test_snapshot.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

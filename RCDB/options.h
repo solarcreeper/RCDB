@@ -9,8 +9,9 @@ public:
 		int mem_table_size = 1000,
 		std::string path = "./data/",
 		std::string mem_table_name = "mem_table.dat",
-		std::string index_name = "data_index.dat");
-
+		std::string index_name = "data_index.dat",
+		std::string snapshot_path = "./snapshot/");
+		
 	~Options();
 
 public:
@@ -19,5 +20,6 @@ public:
 	std::string path;
 	std::string mem_table_name;
 	std::string index_name;
+	std::string snapshot_path;
 };
 #endif // !OPTIONS_H

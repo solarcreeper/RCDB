@@ -50,7 +50,7 @@ int SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value,
 	}
 
 	bool is_find = (update[0]->forward[0] && compare(update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
-	int result = -1;
+	int result = FAILED;
 	if (!is_find)
 	{
 		SkipListNode* node = new SkipListNode;
@@ -90,7 +90,7 @@ int SkipList::deleteNode(unsigned char* key, int key_size)
 	}
 
 	bool is_find = (update[0]->forward[0] && compare(update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
-	int result = -1;
+	int result = FAILED;
 	if (is_find)
 	{
 		if (update[0]->forward[0]->slice.isDeleted())

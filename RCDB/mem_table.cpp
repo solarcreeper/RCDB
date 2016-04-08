@@ -31,7 +31,7 @@ int MemTable::put(unsigned char* key, int key_size, unsigned char* value, int va
 	{
 		table = this->mem_table2;
 	}
-	int result = -1;
+	int result = FAILED;
 	if (value_size == 0)
 	{
 		result = table->deleteNode(key, key_size);
