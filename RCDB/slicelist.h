@@ -13,10 +13,10 @@ class SliceList
 public:
 	SliceList();
 	~SliceList();
-	void add(Slice slice);
+	void add(Slice& slice);
 
-private:
-	SliceListNode* slice_list;
+public:
+	SliceListNode* Begin();
 
 private:
 	SliceListNode* slice_list;
@@ -24,24 +24,23 @@ private:
 	class List_Iterator
 	{
 		SliceListNode* curr;
-		Slice p;
 
 	public:
 		void operator =(SliceListNode* ptr)
 		{
 			curr = ptr;
-			p = Slice();
 		}
 
-		Slice& next()
+		Slice next()
 		{
-			p = Slice();
+			Slice p;
 			if (curr->next)
 			{
 				p = curr->next->slice;
 				curr = curr->next;
+				return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
 			}
-			return p;
+			return Slice();
 		}
 
 		bool isEmpty()
@@ -53,5 +52,8 @@ private:
 			return true;
 		}
 	};
+
+public:
+	typedef List_Iterator iterator;
 };
 #endif // ! SLICELIST_H

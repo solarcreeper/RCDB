@@ -10,6 +10,8 @@ DB::DB(Options option)
 
 DB::~DB()
 {
+	this->saveData();
+
 	if (this->cache)
 	{
 		delete this->cache;
@@ -46,8 +48,7 @@ bool DB::put(unsigned char* key, int key_size, unsigned char* value, int value_s
 		if (this->mem_table->isTableFull())
 		{
 			this->mem_table->setTableMutex();
-			this->saveMemTable();
-			this->filterData();
+			this->saveData();
 		}
 	}
 	return true;
@@ -65,8 +66,6 @@ bool DB::batchPut(unsigned char* key, int key_size, unsigned char* value, int va
 		this->mem_table_batch = new MemTable(100, INT_MAX);
 
 		this->batch_result = new SliceList;
-		this->batch_result->slice = Slice();
-		this->batch_result->next = NULL;
 
 		this->is_batch_success = true;
 	}
@@ -85,38 +84,59 @@ bool DB::batchPut(unsigned char* key, int key_size, unsigned char* value, int va
 
 bool DB::batchGet(unsigned char* key, int key_size)
 {
+	if (!this->is_batch_success)
+	{
+		return false;
+	}
 	Slice slice;
-	slice = this->mem_table->get(key, key_size);
+	slice = this->mem_table_batch->get(key, key_size);
+	if (slice.getKeySize() == 0)
+	{
+		slice = this->mem_table->get(key, key_size);
+	}
 	if (slice.getKeySize() == 0)
 	{
 		slice = this->cache->get(key, key_size);
 	}
 	if (slice.getKeySize() > 0)
 	{
-		SliceList* it = this->batch_result;
-		while (it->next)
-		{
-			it = it->next;
-		}
+		this->batch_result->add(slice);
+	}  
+	return true;
+}
 
+bool DB::writeBatch()
+{
+	if (is_batch_success)
+	{
+		std::thread t1(&MemTable::saveMemtable, this->mem_table_batch, &this->write_table_done);
+		t1.join();
+		std::thread t2(&SSTableFilter::filter, this->filter, &this->write_table_done);
+		t2.join();
+	}
+	else
+	{
+		delete mem_table_batch;
+	}
+	return this->is_batch_success;
+}
+
+SliceList* DB::getBatchResult()
+{
+	if (this->batch_result)
+	{
+		return this->batch_result;
+	}
+	else
+	{
+		return NULL;
 	}
 }
 
-void DB::writeBatch()
-{
-
-}
-
-
-void DB::saveMemTable() 
-
+void DB::saveData()
 {
 	std::thread t1(&MemTable::saveMemtable, this->mem_table, &this->write_table_done);
 	t1.join();
-}
-
-void DB::filterData()
-{
 	std::thread t2(&SSTableFilter::filter, this->filter, &this->write_table_done);
 	t2.join();
 }

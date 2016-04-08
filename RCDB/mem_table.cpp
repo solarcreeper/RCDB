@@ -74,7 +74,7 @@ Slice MemTable::get(unsigned char* key, int key_size)
 
 void MemTable::saveMemtable(bool* write_table_done)
 {
-	if (!this->current_table)
+	if (this->current_table)
 	{
 		if (this->mem_table2)
 		{
@@ -99,7 +99,7 @@ void MemTable::saveMemtable(bool* write_table_done)
 		return;
 	}
 	SkipList* table = this->mem_table1;
-	if (this->current_table)
+	if (!this->current_table)
 	{
 		table = this->mem_table2;
 	}

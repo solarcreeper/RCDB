@@ -19,7 +19,7 @@ SliceList::~SliceList()
 	}
 }
 
-void SliceList::add(Slice slice)
+void SliceList::add(Slice& slice)
 {
 	SliceListNode* it = this->slice_list;
 	while (it->next)
@@ -28,7 +28,13 @@ void SliceList::add(Slice slice)
 	}
 	
 	SliceListNode* node = new SliceListNode;
+	node->slice = Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
 	node->next = NULL;
 
 	it->next = node;
+}
+
+SliceListNode* SliceList::Begin()
+{
+	return this->slice_list;
 }

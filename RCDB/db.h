@@ -15,13 +15,14 @@ public:
 	Slice get(unsigned char* key, int key_size);
 	bool put(unsigned char* key, int key_size, unsigned char* value, int value_size);
 	
+public:
 	bool batchPut(unsigned char* key, int key_size, unsigned char* value, int value_size);
 	bool batchGet(unsigned char* key, int key_size);
-	void writeBatch();
+	bool writeBatch();
+	SliceList* getBatchResult();
 	
 private:
-	void saveMemTable();
-	void filterData();
+	void saveData();
 
 private:
 	Cache* cache;

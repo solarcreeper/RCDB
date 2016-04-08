@@ -61,9 +61,9 @@ private:
 			p = Slice();
 		}
 
-		Slice& pre()
+		Slice pre()
 		{
-			p = Slice();
+			Slice p;
 			if (curr == head || head->forward[0] == curr)
 			{
 				curr = head;
@@ -76,18 +76,18 @@ private:
 			}
 			p = it->slice;
 			curr = it;
-			return p;
+			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
 		}
 
-		Slice& next()
+		Slice next()
 		{
-			p = Slice();
+			Slice p;
 			if (curr->forward[0])
 			{
 				p = curr->forward[0]->slice;
 				curr = curr->forward[0];
 			}
-			return p;
+			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
 		}
 
 		bool isEmpty()

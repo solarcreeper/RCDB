@@ -26,6 +26,7 @@ void main()
 	double start = clock();
 	for (int i = 0; i < size; i++)
 	{
+		//db->batchPut(key[i], 5, value[i], 5);
 		db->put(key[i], 5, value[i], 5);
 		std::cout << i << std::endl;
 	}
@@ -34,11 +35,13 @@ void main()
 
 	for (int i = 0; i < size; i++)
 	{
+		//db->batchGet(key[i], 5);
 		db->get(key[i], 5);
 	}
+	/*db->writeBatch();
+	SliceList* reult = db->getBatchResult();*/
+
 	double end2 = clock();
 	delete db;
 	int total2 = end2 - end1;
-
-
 }

@@ -80,10 +80,10 @@
     <ClCompile Include="snapshot.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test_snapshot.cpp">
+    <ClCompile Include="slicelist.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="slicelist.cpp">
+    <ClCompile Include="test_snapshot.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
