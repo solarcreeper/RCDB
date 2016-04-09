@@ -83,7 +83,7 @@
     <ClCompile Include="slicelist.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test_snapshot.cpp">
+    <ClCompile Include="test_slice_list.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
