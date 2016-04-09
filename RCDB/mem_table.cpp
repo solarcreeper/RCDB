@@ -156,3 +156,12 @@ void MemTable::setTableMutex()
 {
 	this->current_table = !this->current_table;
 }
+
+SkipList* MemTable::getTable()
+{
+	if (this->current_table)
+	{
+		return this->mem_table1;
+	}
+	return this->mem_table2;
+}

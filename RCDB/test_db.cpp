@@ -28,19 +28,33 @@ void main()
 	{
 		//db->batchPut(key[i], 5, value[i], 5);
 		db->put(key[i], 5, value[i], 5);
-		std::cout << i << std::endl;
+		std::string s((char*)key[i]);
+		std::cout << s << std::endl;
 	}
 	double end1 = clock();
 	int total1 = end1 - start;
 
+	Slice s;
 	for (int i = 0; i < size; i++)
 	{
-		//db->batchGet(key[i], 5);
-		db->get(key[i], 5);
+		//s = db->batchGet(key[i], 5);
+		s = db->get(key[i], 5);
 	}
-	/*db->writeBatch();
-	SliceList* reult = db->getBatchResult();*/
+	//db->writeBatch();
 
+	DB::batch_iterator ita1;
+	ita1 = db->batchBegin();
+	while (!ita1.isEmpty())
+	{
+		Slice s = ita1.next();
+	}
+
+	DB::iterator ita;
+	ita = db->begin();
+	while (!ita.isEmpty())
+	{
+		Slice slice = ita.next();
+	}
 	double end2 = clock();
 	delete db;
 	int total2 = end2 - end1;

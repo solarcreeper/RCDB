@@ -45,6 +45,11 @@ private:
 
 		bool isEmpty()
 		{
+			if (curr == NULL)
+			{
+				return true;
+			}
+
 			if (curr->next)
 			{
 				return false;

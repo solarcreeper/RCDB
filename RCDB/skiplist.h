@@ -52,23 +52,22 @@ private:
 	{
 		SkipListNode* curr;
 		SkipListNode* head;
-		Slice p;
 	public:
 		void operator =(SkipListNode* ptr)
 		{
 			curr = ptr;
 			head = ptr;
-			p = Slice();
 		}
 
 		Slice pre()
 		{
-			Slice p;
 			if (curr == head || head->forward[0] == curr)
 			{
 				curr = head;
-				return p;
+				return Slice();
 			}
+			
+			Slice p;
 			SkipListNode* it = head->forward[0];
 			while (it->forward[0] != curr)
 			{
@@ -92,6 +91,11 @@ private:
 
 		bool isEmpty()
 		{
+			if (curr == NULL)
+			{
+				return true;
+			}
+
 			if(curr->forward[0])
 			{ 
 				return false;

@@ -38,12 +38,12 @@ Slice::Slice(unsigned char* key, int key_size, unsigned char* value, int value_s
 
 Slice::~Slice() 
 {
-	if (key != NULL)
+	if (this->key_size >0)
 	{
 		delete[] key;
 		this->key = NULL;
 	}
-	if (value != NULL)
+	if (this->value_size != NULL)
 	{
  		delete[] value;
 		this->value = NULL;
@@ -81,7 +81,7 @@ Slice& Slice::operator =(const Slice& slice)
 	if (slice.key_size > 0)
 	{
 		this->key = new unsigned char[slice.key_size];
-		memcpy(this->key, slice.key, key_size);
+		memcpy(this->key, slice.key, slice.key_size);
 
 		//strcpy_s((char*)this->key, slice.key_size, (char*)slice.key);
 
@@ -89,7 +89,7 @@ Slice& Slice::operator =(const Slice& slice)
 	if (slice.value_size > 0)
 	{
 		this->value = new unsigned char[slice.key_size];
-		memcpy(this->value, slice.value, value_size);
+		memcpy(this->value, slice.value, slice.key_size);
 
 		//strcpy_s((char*)this->value, slice.value_size, (char*)slice.value);
 

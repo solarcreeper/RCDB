@@ -13,7 +13,8 @@ void main()
 	SliceList::iterator ita;
 	ita = list->Begin();
 	while (!ita.isEmpty())
-	{
+	{ 
+
 		Slice slice = ita.next();
 	}
 	delete list;

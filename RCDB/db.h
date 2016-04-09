@@ -17,10 +17,12 @@ public:
 	
 public:
 	bool batchPut(unsigned char* key, int key_size, unsigned char* value, int value_size);
-	bool batchGet(unsigned char* key, int key_size);
+	Slice batchGet(unsigned char* key, int key_size);
 	bool writeBatch();
-	SliceList* getBatchResult();
 	
+public:
+	SkipListNode* begin();
+	SliceListNode* batchBegin();
 private:
 	void saveData();
 
@@ -37,6 +39,9 @@ private:
 	bool write_table_done;
 	bool is_batch_success;
 
+public:
+	typedef SkipList::iterator iterator;
+	typedef SliceList::iterator batch_iterator;
 };
 
 #endif // !DB_H

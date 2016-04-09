@@ -17,6 +17,10 @@ public:
 	void saveMemtable(bool* write_table_done);
 	bool isTableFull();
 	void setTableMutex();
+
+public:
+	SkipList* getTable();
+
 private:
 	bool current_table;
 

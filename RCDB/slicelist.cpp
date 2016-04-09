@@ -36,5 +36,9 @@ void SliceList::add(Slice& slice)
 
 SliceListNode* SliceList::Begin()
 {
-	return this->slice_list;
+	if (this->slice_list)
+	{
+		return this->slice_list;
+	}
+	return NULL;
 }

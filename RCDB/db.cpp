@@ -64,9 +64,7 @@ bool DB::batchPut(unsigned char* key, int key_size, unsigned char* value, int va
 			this->batch_result = NULL;
 		}
 		this->mem_table_batch = new MemTable(100, INT_MAX);
-
 		this->batch_result = new SliceList;
-
 		this->is_batch_success = true;
 	}
 	if (!this->is_batch_success)
@@ -82,11 +80,18 @@ bool DB::batchPut(unsigned char* key, int key_size, unsigned char* value, int va
 	return true;
 }
 
-bool DB::batchGet(unsigned char* key, int key_size)
+Slice DB::batchGet(unsigned char* key, int key_size)
 {
-	if (!this->is_batch_success)
+	if (this->mem_table_batch == NULL)
 	{
-		return false;
+		if (this->batch_result != NULL)
+		{
+			delete this->batch_result;
+			this->batch_result = NULL;
+		}
+		this->mem_table_batch = new MemTable(100, INT_MAX);
+		this->batch_result = new SliceList;
+		this->is_batch_success = true;
 	}
 	Slice slice;
 	slice = this->mem_table_batch->get(key, key_size);
@@ -94,15 +99,18 @@ bool DB::batchGet(unsigned char* key, int key_size)
 	{
 		slice = this->mem_table->get(key, key_size);
 	}
+
 	if (slice.getKeySize() == 0)
 	{
 		slice = this->cache->get(key, key_size);
 	}
+
 	if (slice.getKeySize() > 0)
 	{
 		this->batch_result->add(slice);
-	}  
-	return true;
+	}
+
+	return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
 }
 
 bool DB::writeBatch()
@@ -121,22 +129,24 @@ bool DB::writeBatch()
 	return this->is_batch_success;
 }
 
-SliceList* DB::getBatchResult()
-{
-	if (this->batch_result)
-	{
-		return this->batch_result;
-	}
-	else
-	{
-		return NULL;
-	}
-}
-
 void DB::saveData()
 {
 	std::thread t1(&MemTable::saveMemtable, this->mem_table, &this->write_table_done);
 	t1.join();
 	std::thread t2(&SSTableFilter::filter, this->filter, &this->write_table_done);
 	t2.join();
+}
+
+SkipListNode* DB::begin()
+{
+	return this->mem_table->getTable()->Begin();
+}
+
+SliceListNode* DB::batchBegin()
+{
+	if (this->batch_result)
+	{
+		return this->batch_result->Begin();
+	}
+	return NULL;
 }
