@@ -137,7 +137,7 @@ void DB::saveData()
 	t2.join();
 }
 
-SkipListNode* DB::begin()
+SkipListNode* DB::memBegin()
 {
 	return this->mem_table->getTable()->Begin();
 }

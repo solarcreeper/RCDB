@@ -21,7 +21,7 @@ public:
 	bool writeBatch();
 	
 public:
-	SkipListNode* begin();
+	SkipListNode* memBegin();
 	SliceListNode* batchBegin();
 private:
 	void saveData();
@@ -39,8 +39,37 @@ private:
 	bool write_table_done;
 	bool is_batch_success;
 
+private:
+	class DB_Iterator
+	{
+		SkipListNode* curr;
+		SSTable* index_table;
+		SSTable::index_iterator iterator;
+
+	public:
+		void operator =()
+		{
+			curr = ptr;
+			
+		}
+		Slice pre()
+		{
+			
+		}
+
+		Slice next()
+		{
+
+		}
+
+		bool isEmpty()
+		{
+
+		}
+	};
+
 public:
-	typedef SkipList::iterator iterator;
+	typedef SkipList::iterator mem_iterator;
 	typedef SliceList::iterator batch_iterator;
 };
 

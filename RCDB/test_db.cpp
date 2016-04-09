@@ -9,10 +9,12 @@ void main()
 	DB *db = new DB(p);
 
 	const int size = 10;
-	unsigned char key[size][5];
-	unsigned char value[size][5];
+	unsigned char* key[size];
+	unsigned char* value[size];
 	for (int i = 0; i < size; i++)
 	{
+		key[i] = new unsigned char[5];
+		value[i] = new unsigned char[5];
 
 		for (int m = 0; m < 4; m++)
 		{

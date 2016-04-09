@@ -15,24 +15,20 @@ Slice::Slice(unsigned char* key, int key_size, unsigned char* value, int value_s
 	this->key_size = key_size;
 	this->value_size = value_size;
 
-	
-	
 
 	if (key_size > 0)
 	{
 		this->key = new unsigned char[key_size];
 		memcpy(this->key, key, key_size);
-
-		/*this->key = new unsigned char[key_size];
-		strcpy_s((char*)this->key, key_size, (char*)key);*/
+		/*delete[] key;
+		key = NULL;*/
 	}
 	if (value_size > 0)
 	{
 		this->value = new unsigned char[value_size];
 		memcpy(this->value, value, value_size);
-
-		/*this->value = new unsigned char[value_size];
-		strcpy_s((char*)this->value, value_size, (char*)value);*/
+		/*delete[] value;
+		value = NULL;*/
 	}
 }
 
@@ -40,12 +36,12 @@ Slice::~Slice()
 {
 	if (this->key_size >0)
 	{
-		delete[] key;
+		delete[] this->key;
 		this->key = NULL;
 	}
 	if (this->value_size != NULL)
 	{
- 		delete[] value;
+ 		delete[] this->value;
 		this->value = NULL;
 	}
 }
@@ -78,24 +74,20 @@ Slice& Slice::operator =(const Slice& slice)
 		delete[] value;
 		value = NULL;
 	}
-	if (slice.key_size > 0)
-	{
-		this->key = new unsigned char[slice.key_size];
-		memcpy(this->key, slice.key, slice.key_size);
 
-		//strcpy_s((char*)this->key, slice.key_size, (char*)slice.key);
-
-	}
-	if (slice.value_size > 0)
-	{
-		this->value = new unsigned char[slice.key_size];
-		memcpy(this->value, slice.value, slice.key_size);
-
-		//strcpy_s((char*)this->value, slice.value_size, (char*)slice.value);
-
-	}
- 	this->key_size = slice.key_size;
+	this->key_size = slice.key_size;
 	this->value_size = slice.value_size;
+
+	if (key_size > 0)
+	{
+		this->key = new unsigned char[key_size];
+		memcpy(this->key, slice.key, key_size);
+	}
+	if (value_size > 0)
+	{
+		this->value = new unsigned char[key_size];
+		memcpy(this->value, slice.value, key_size);
+	}
 	return *this;
 }
 
