@@ -59,7 +59,7 @@ private:
 
 	public:
 
-		DB_Iterator(unsigned char* key, int key_size, std::string data_path)
+		DB_Iterator(unsigned char* key, int key_size, std::string data_path = "./data/")
 		{
 			this->key = key;
 			this->key_size = key_size;

@@ -150,6 +150,7 @@
     <ClInclude Include="db.h" />
     <ClInclude Include="mem_table.h" />
     <ClInclude Include="options.h" />
+    <ClInclude Include="port.hpp" />
     <ClInclude Include="skiplist.h" />
     <ClInclude Include="slice.h" />
     <ClInclude Include="slicelist.h" />
@@ -161,6 +162,7 @@
   <ItemGroup>
     <ClCompile Include="Cache.cpp" />
     <ClCompile Include="db.cpp" />
+    <ClCompile Include="file.cpp" />
     <ClCompile Include="mem_table.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="skiplist.cpp" />
@@ -170,7 +172,7 @@
     <ClCompile Include="sstable.cpp" />
     <ClCompile Include="sstable_block.cpp" />
     <ClCompile Include="sstable_filter.cpp" />
-    <ClCompile Include="test_db.cpp" />
+    <ClCompile Include="test_file.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

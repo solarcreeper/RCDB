@@ -60,19 +60,19 @@ void main()
 	{
 		s = ita.pre();
 	}
-	//DB::batch_iterator ita1;
-	//ita1 = db->batchBegin();
-	//while (!ita1.isEmpty())
-	//{
-	//	Slice s = ita1.next();
-	//}
+	DB::batch_iterator ita1;
+	ita1 = db->batchBegin();
+	while (!ita1.isEmpty())
+	{
+		Slice s = ita1.next();
+	}
 
-	//DB::mem_iterator ita;
-	//ita = db->memBegin();
-	//while (!ita.isEmpty())
-	//{
-	//	Slice slice = ita.next();
-	//}
+	DB::mem_iterator ita2;
+	ita2 = db->memBegin();
+	while (!ita2.isEmpty())
+	{
+		Slice slice = ita2.next();
+	}
 	double end2 = clock();
 	delete db;
 	int total2 = end2 - end1;
