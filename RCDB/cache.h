@@ -11,6 +11,9 @@ public:
 
 	Slice get(unsigned char* key, int key_size);
 
+public:
+	SSTable* getTable();
+
 private:
 	SSTableBlock* cache_block[CACHE_SIZE];
 	SSTable* cache_index;

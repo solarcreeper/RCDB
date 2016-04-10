@@ -23,6 +23,10 @@ public:
 	bool saveIdx();
 	bool addInx(unsigned char* start, int start_length, unsigned char* filename, int file_length);
 	std::string getFilename(unsigned char* start, int start_length);
+	int getFilePrefix(unsigned char* start, int start_length);
+public:
+	SSTableList* indexBegin();
+
 private:
 	SSTableList* index;
 	int index_size;
@@ -69,7 +73,7 @@ private:
 			std::string result = "";
 			if (curr->next)
 			{
-				result = std::to_string(curr->filename).append(".dat");
+				result = std::to_string(curr->next->filename).append(".dat");
 				curr = curr->next;
 			}
 			return result;
@@ -87,6 +91,15 @@ private:
 				return false;
 			}
 			return true;
+		}
+
+		bool isHead()
+		{
+			if (curr == head || curr == head->next)
+			{
+				return true;
+			}
+			return false;
 		}
 	};
 public:

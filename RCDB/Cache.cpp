@@ -112,3 +112,12 @@ void Cache::reloadBlock(int curr_block, std::string filename)
 	cache_block[curr_block]->readBlock();
 	return;
 }
+
+SSTable* Cache::getTable()
+{
+	if (this->cache_index)
+	{
+		return this->cache_index;
+	}
+	return NULL;
+}

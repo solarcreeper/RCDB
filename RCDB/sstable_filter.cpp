@@ -48,11 +48,13 @@ void SSTableFilter::filter(bool* write_table_done)
 	SkipList* block = this->data_to_save->getBlock();
 	ita = block->Begin();
 	std::string last_index = "";
+	int file_prefix = -1;
 	while (!ita.isEmpty())
 	{
 		Slice slice;
 		slice = ita.next();
-		std::string file_index = index_table->getFilename(slice.getKey(), slice.getKeySize());
+		file_prefix = index_table->getFilePrefix(slice.getKey(), slice.getKeySize());
+		std::string file_index = std::to_string(file_prefix).append(".dat");
 		if (last_index == "" || file_index != last_index)
 		{
 			//need to change the data block

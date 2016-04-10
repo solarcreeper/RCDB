@@ -129,6 +129,16 @@ bool DB::writeBatch()
 	return this->is_batch_success;
 }
 
+void DB::printList()
+{
+	this->mem_table->getTable()->printList();
+}
+void DB::printListToFile()
+{
+	this->mem_table->getTable()->printListToFile("./data/test.txt");
+}
+
+
 void DB::saveData()
 {
 	std::thread t1(&MemTable::saveMemtable, this->mem_table, &this->write_table_done);
@@ -147,6 +157,17 @@ SliceListNode* DB::batchBegin()
 	if (this->batch_result)
 	{
 		return this->batch_result->Begin();
+	}
+	return NULL;
+}
+
+SSTable* DB::dbBegin()
+{
+	//save data before iterator start
+	this->saveData();
+	if (this->cache)
+	{
+		return this->cache->getTable();
 	}
 	return NULL;
 }

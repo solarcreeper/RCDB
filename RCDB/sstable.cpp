@@ -160,6 +160,25 @@ std::string SSTable::getFilename(unsigned char* start, int length)
 	return NULL;
 }
 
+int SSTable::getFilePrefix(unsigned char* start, int start_length)
+{
+	SSTableList* list = this->index;
+	while (list->next)
+	{
+		if (isEqual(list->next->start, list->next->start_length, start, start_length))
+		{
+			break;
+		}
+		list = list->next;
+	}
+	int result = -1;
+	if (list->next)
+	{
+		result = list->next->filename;
+	}
+	return result;
+}
+
 void SSTable::initIdx()
 {
 	std::ofstream file(this->file_url, std::ios::binary);
@@ -173,6 +192,7 @@ void SSTable::initIdx()
 	unsigned char* start = new unsigned char[2];
 	const int length = sizeof(int);
 	const int value = 2;
+
 	for (int i = 0; i < this->index_size; i++)
 	{
 		file.write((char *)&value, length);
@@ -239,4 +259,14 @@ bool SSTable::isEqual(unsigned char* start, int start_length, unsigned char* b, 
 		}
 	}
 	return true;
+}
+
+
+SSTableList* SSTable::indexBegin()
+{
+	if (this->index != NULL)
+	{
+		return this->index;
+	}
+	return NULL;
 }

@@ -36,6 +36,8 @@ void main()
 	double end1 = clock();
 	int total1 = end1 - start;
 
+	db->printListToFile();
+
 	Slice s;
 	for (int i = 0; i < size; i++)
 	{
@@ -44,19 +46,33 @@ void main()
 	}
 	//db->writeBatch();
 
-	DB::batch_iterator ita1;
-	ita1 = db->batchBegin();
-	while (!ita1.isEmpty())
-	{
-		Slice s = ita1.next();
-	}
+	DB::db_iterator ita(key[1], 5, p.path);
+	ita = db->dbBegin();
 
-	DB::iterator ita;
-	ita = db->begin();
 	while (!ita.isEmpty())
 	{
-		Slice slice = ita.next();
+		Slice s = ita.next();
 	}
+
+	s = ita.pre();
+	s = ita.pre();
+	while (!ita.isHead())
+	{
+		s = ita.pre();
+	}
+	//DB::batch_iterator ita1;
+	//ita1 = db->batchBegin();
+	//while (!ita1.isEmpty())
+	//{
+	//	Slice s = ita1.next();
+	//}
+
+	//DB::mem_iterator ita;
+	//ita = db->memBegin();
+	//while (!ita.isEmpty())
+	//{
+	//	Slice slice = ita.next();
+	//}
 	double end2 = clock();
 	delete db;
 	int total2 = end2 - end1;

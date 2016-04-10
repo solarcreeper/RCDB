@@ -102,6 +102,15 @@ private:
 			}
 			return true;
 		}
+
+		bool isHead()
+		{
+			if (curr == head || head->forward[0] == curr )
+			{
+				return true;
+			}
+			return false;
+		}
 	};
 
 public:
