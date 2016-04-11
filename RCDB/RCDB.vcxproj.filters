@@ -89,7 +89,7 @@
     <ClCompile Include="file.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="test_file.cpp">
+    <ClCompile Include="test_db.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

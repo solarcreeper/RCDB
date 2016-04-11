@@ -6,6 +6,7 @@ DB::DB(Options option)
 	this->mem_table = new MemTable(option.mem_table_level, option.mem_table_size, option.path + option.mem_table_name);
 	this->filter = new SSTableFilter(option.mem_table_name, option.index_name, option.path);
 	this->write_table_done = false;
+	this->option = option;
 }
 
 DB::~DB()
@@ -170,4 +171,9 @@ SSTable* DB::dbBegin()
 		return this->cache->getTable();
 	}
 	return NULL;
+}
+
+Options DB::getOption()
+{
+	return this->option;
 }

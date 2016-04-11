@@ -19,6 +19,7 @@ public:
 	bool batchPut(unsigned char* key, int key_size, unsigned char* value, int value_size);
 	Slice batchGet(unsigned char* key, int key_size);
 	bool writeBatch();
+	Options getOption();
 	
 public:
 	void printList();
@@ -44,6 +45,7 @@ private:
 private:
 	bool write_table_done;
 	bool is_batch_success;
+	Options option;
 
 private:
 	class DB_Iterator
@@ -74,6 +76,32 @@ private:
 				this->block = NULL;
 			}
 		}
+		/*void setLocation(unsigned char* key, int key_size, SSTable* index)
+		{
+			std::string file = index->getFilename(this->key, this->key_size);
+			this->ita = index->indexBegin();
+			while ((!ita.isEmpty()))
+			{
+				std::string next = ita.next();
+				if (next == file)
+				{
+					break;
+				}
+			}
+			if (this->block != NULL)
+			{
+				block->saveBlock();
+				delete block;
+				this->block = NULL;
+			}
+
+			this->block = new SSTableBlock(file, this->path);
+			this->block->readBlock();
+			this->list_ita = this->block->getBlock()->Begin();
+
+			this->toCurrKey();
+		}*/
+
 		void operator =(SSTable* index)
 		{
 			std::string file = index->getFilename(this->key, this->key_size);
@@ -88,6 +116,7 @@ private:
 			}
 			if (this->block != NULL)
 			{
+				block->saveBlock();
 				delete block;
 				this->block = NULL;
 			}
@@ -152,7 +181,12 @@ private:
 			}
 		}
 
-		bool isEmpty()
+		Slice curr()
+		{
+			return list_ita.current();
+		}
+
+		bool isTail()
 		{
 			if (list_ita.isEmpty() && ita.isEmpty())
 			{

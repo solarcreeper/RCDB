@@ -89,6 +89,16 @@ private:
 			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
 		}
 
+		Slice current()
+		{
+			Slice p;
+			if (curr->slice.getKey() > 0)
+			{
+				p = curr->slice;
+			}
+			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
+		}
+
 		bool isEmpty()
 		{
 			if (curr == NULL)

@@ -49,10 +49,13 @@ void main()
 	DB::db_iterator ita(key[1], 5, p.path);
 	ita = db->dbBegin();
 
-	while (!ita.isEmpty())
+	while (!ita.isTail())
 	{
+		Slice s1 = ita.curr();
 		Slice s = ita.next();
 	}
+
+	//ita.setLocation(key[2], 5, db->dbBegin());
 
 	s = ita.pre();
 	s = ita.pre();
@@ -60,7 +63,10 @@ void main()
 	{
 		s = ita.pre();
 	}
-	DB::batch_iterator ita1;
+
+	db->printListToFile();
+
+	/*DB::batch_iterator ita1;
 	ita1 = db->batchBegin();
 	while (!ita1.isEmpty())
 	{
@@ -72,7 +78,7 @@ void main()
 	while (!ita2.isEmpty())
 	{
 		Slice slice = ita2.next();
-	}
+	}*/
 	double end2 = clock();
 	delete db;
 	int total2 = end2 - end1;
