@@ -31,15 +31,15 @@ Cache::~Cache()
 	}
 }
 
-Slice Cache::get(unsigned char* key, int key_size)
+Slice Cache::get(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size)
 {
 	std::string filename = this->cache_index->getFilename(key, key_size);
 
 	Slice result;
-	result = this->getFormCache(key, key_size, filename);
+	result = this->getFormCache(compare, key, key_size, filename);
 	if (result.getKey() == 0)
 	{
-		result = this->getFromFile(key, key_size, filename);
+		result = this->getFromFile(compare, key, key_size, filename);
 	}
 	return Slice(result.getKey(), result.getKeySize(), result.getValue(), result.getValueSize());
 }
@@ -59,7 +59,7 @@ int Cache::isInCache(std::string filename)
 	return -1;
 }
 
-Slice Cache::getFormCache(unsigned char* key, int key_size, std::string filename)
+Slice Cache::getFormCache(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, std::string filename)
 {
 	int block_index = this->isInCache(filename);
 	if (block_index == -1)
@@ -68,16 +68,16 @@ Slice Cache::getFormCache(unsigned char* key, int key_size, std::string filename
 	}
 	SkipList* block_data = cache_block[block_index]->getBlock();
 	Slice result;
-	result = block_data->searchNode(key, key_size);
+	result = block_data->searchNode(compare, key, key_size);
 	return Slice(result.getKey(), result.getKeySize(), result.getValue(), result.getValueSize());
 }
 
-Slice Cache::getFromFile(unsigned char* key, int key_size, std::string filename)
+Slice Cache::getFromFile(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, std::string filename)
 {
-	this->reloadBlock(curr_block, filename);
+	this->reloadBlock(compare, curr_block, filename);
 	SkipList* block_data = cache_block[curr_block]->getBlock();
 	Slice result;
-	result = block_data->searchNode(key, key_size);
+	result = block_data->searchNode(compare, key, key_size);
 
 	this->curr_block++;
 	if (this->curr_block == CACHE_SIZE)
@@ -100,7 +100,7 @@ void Cache::reloadIndex()
 	return;
 }
 
-void Cache::reloadBlock(int curr_block, std::string filename)
+void Cache::reloadBlock(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), int curr_block, std::string filename)
 {
 	if (cache_block[curr_block] != NULL)
 	{
@@ -109,7 +109,7 @@ void Cache::reloadBlock(int curr_block, std::string filename)
 	}
 
 	cache_block[curr_block] = new SSTableBlock(filename, this->sstable_block_path);
-	cache_block[curr_block]->readBlock();
+	cache_block[curr_block]->readBlock(compare);
 	return;
 }
 

@@ -45,8 +45,7 @@ void main()
 		s = db->get(key[i], 5);
 	}
 	//db->writeBatch();
-
-	DB::db_iterator ita(key[1], 5, p.path);
+	DB::db_iterator ita(p.compare, key[1], 5, p.path);
 	ita = db->dbBegin();
 
 	while (!ita.isTail())

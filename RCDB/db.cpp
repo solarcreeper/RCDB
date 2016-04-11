@@ -33,17 +33,17 @@ DB::~DB()
 Slice DB::get(unsigned char* key, int key_size)
 {
 	Slice slice;
-	slice = this->mem_table->get(key, key_size);
+	slice = this->mem_table->get(this->option.compare, key, key_size);
 	if (slice.getKeySize() == 0)
 	{
-		slice = this->cache->get(key, key_size);
+		slice = this->cache->get(this->option.compare, key, key_size);
 	}
 	return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
 }
 
 bool DB::put(unsigned char* key, int key_size, unsigned char* value, int value_size)
 {
-	int result = this->mem_table->put(key, key_size, value, value_size);
+	int result = this->mem_table->put(this->option.compare, key, key_size, value, value_size);
 	if (result == INSERT_VALUE_SUCCESS)
 	{
 		if (this->mem_table->isTableFull())
@@ -72,7 +72,7 @@ bool DB::batchPut(unsigned char* key, int key_size, unsigned char* value, int va
 	{
 		return false;
 	}
-	int result = this->mem_table_batch->put(key, key_size, value, value_size);
+	int result = this->mem_table_batch->put(this->option.compare, key, key_size, value, value_size);
 	if (result == FAILED)
 	{
 		this->is_batch_success = false;
@@ -95,15 +95,15 @@ Slice DB::batchGet(unsigned char* key, int key_size)
 		this->is_batch_success = true;
 	}
 	Slice slice;
-	slice = this->mem_table_batch->get(key, key_size);
+	slice = this->mem_table_batch->get(this->option.compare, key, key_size);
 	if (slice.getKeySize() == 0)
 	{
-		slice = this->mem_table->get(key, key_size);
+		slice = this->mem_table->get(this->option.compare, key, key_size);
 	}
 
 	if (slice.getKeySize() == 0)
 	{
-		slice = this->cache->get(key, key_size);
+		slice = this->cache->get(this->option.compare, key, key_size);
 	}
 
 	if (slice.getKeySize() > 0)
@@ -120,7 +120,7 @@ bool DB::writeBatch()
 	{
 		std::thread t1(&MemTable::saveMemtable, this->mem_table_batch, &this->write_table_done);
 		t1.join();
-		std::thread t2(&SSTableFilter::filter, this->filter, &this->write_table_done);
+		std::thread t2(&SSTableFilter::filter, this->filter, this->option.compare, &this->write_table_done);
 		t2.join();
 	}
 	else
@@ -144,7 +144,7 @@ void DB::saveData()
 {
 	std::thread t1(&MemTable::saveMemtable, this->mem_table, &this->write_table_done);
 	t1.join();
-	std::thread t2(&SSTableFilter::filter, this->filter, &this->write_table_done);
+	std::thread t2(&SSTableFilter::filter, this->filter, this->option.compare, &this->write_table_done);
 	t2.join();
 }
 

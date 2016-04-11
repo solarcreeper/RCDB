@@ -30,7 +30,7 @@ SSTableFilter::~SSTableFilter()
 	}
 }
 
-void SSTableFilter::filter(bool* write_table_done)
+void SSTableFilter::filter(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), bool* write_table_done)
 {
 	while (!*write_table_done)
 	{
@@ -42,14 +42,14 @@ void SSTableFilter::filter(bool* write_table_done)
 		this->data_to_save = NULL;
 	}
 	this->data_to_save = new SSTableBlock(data_file, path);
-	this->data_to_save->readMemTable();
+	this->data_to_save->readMemTable(compare);
 
 	SkipList::iterator ita;
 	SkipList* block = this->data_to_save->getBlock();
 	ita = block->Begin();
 	std::string last_index = "";
 	int file_prefix = -1;
-	while (!ita.isEmpty())
+	while (!ita.isTail())
 	{
 		Slice slice;
 		slice = ita.next();
@@ -65,10 +65,10 @@ void SSTableFilter::filter(bool* write_table_done)
 				this->block = NULL;
 			}
 			this->block = new SSTableBlock(file_index, this->path);
-			this->block->readBlock();
+			this->block->readBlock(compare);
 			last_index = file_index;
 		}
-		int add_result = this->block->addRecord(slice);
+		int add_result = this->block->addRecord(compare, slice);
 	}
 
 	//save the last part of data and release handle

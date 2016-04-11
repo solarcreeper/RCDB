@@ -24,11 +24,31 @@ private:
 	class List_Iterator
 	{
 		SliceListNode* curr;
-
+		SliceListNode* head;
 	public:
 		void operator =(SliceListNode* ptr)
 		{
 			curr = ptr;
+			head = ptr;
+		}
+
+		Slice pre()
+		{
+			if (curr == head || head->next == curr)
+			{
+				curr = head;
+				return Slice();
+			}
+
+			Slice p;
+			SliceListNode* it = head->next;
+			while (it->next != curr)
+			{
+				it = it->next;
+			}
+			p = it->slice;
+			curr = it;
+			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
 		}
 
 		Slice next()
@@ -43,7 +63,17 @@ private:
 			return Slice();
 		}
 
-		bool isEmpty()
+		Slice current()
+		{
+			Slice p;
+			if (curr->slice.getKey() > 0)
+			{
+				p = curr->slice;
+			}
+			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
+		}
+
+		bool isTail()
 		{
 			if (curr == NULL)
 			{
@@ -55,6 +85,11 @@ private:
 				return false;
 			}
 			return true;
+		}
+		
+		bool isHead()
+		{
+
 		}
 	};
 

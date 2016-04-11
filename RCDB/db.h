@@ -58,14 +58,15 @@ private:
 		unsigned char* key;
 		int key_size;
 		std::string path;
-
+		int(*compare_s)(unsigned char* key, int key_size, unsigned char* value, int value_size);
 	public:
 
-		DB_Iterator(unsigned char* key, int key_size, std::string data_path = "./data/")
+		DB_Iterator(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, std::string data_path = "./data/")
 		{
 			this->key = key;
 			this->key_size = key_size;
 			this->path = data_path;
+			this->compare_s = compare;
 		}
 
 		~DB_Iterator()
@@ -76,37 +77,12 @@ private:
 				this->block = NULL;
 			}
 		}
-		/*void setLocation(unsigned char* key, int key_size, SSTable* index)
-		{
-			std::string file = index->getFilename(this->key, this->key_size);
-			this->ita = index->indexBegin();
-			while ((!ita.isEmpty()))
-			{
-				std::string next = ita.next();
-				if (next == file)
-				{
-					break;
-				}
-			}
-			if (this->block != NULL)
-			{
-				block->saveBlock();
-				delete block;
-				this->block = NULL;
-			}
-
-			this->block = new SSTableBlock(file, this->path);
-			this->block->readBlock();
-			this->list_ita = this->block->getBlock()->Begin();
-
-			this->toCurrKey();
-		}*/
 
 		void operator =(SSTable* index)
 		{
 			std::string file = index->getFilename(this->key, this->key_size);
 			this->ita = index->indexBegin();
-			while ((!ita.isEmpty()))
+			while ((!ita.isTail()))
 			{
 				std::string next = ita.next();
 				if (next == file)
@@ -122,7 +98,7 @@ private:
 			}
 
 			this->block = new SSTableBlock(file, this->path);
-			this->block->readBlock();
+			this->block->readBlock(this->compare_s);
 			this->list_ita = this->block->getBlock()->Begin();
 
 			this->toCurrKey();
@@ -156,9 +132,9 @@ private:
 
 		Slice next()
 		{
-			if (list_ita.isEmpty())
+			if (list_ita.isTail())
 			{
-				if (ita.isEmpty())
+				if (ita.isTail())
 				{
 					return Slice();
 				}
@@ -167,7 +143,7 @@ private:
 					std::string file = ita.next();
 					this->reloadBlock(file);
 					Slice s = list_ita.next();
-					while (s.getKeySize() == 0 && (!ita.isEmpty()))
+					while (s.getKeySize() == 0 && (!ita.isTail()))
 					{
 						s = next();
 					}
@@ -188,7 +164,7 @@ private:
 
 		bool isTail()
 		{
-			if (list_ita.isEmpty() && ita.isEmpty())
+			if (list_ita.isTail() && ita.isTail())
 			{
 				return true;
 			}
@@ -212,14 +188,14 @@ private:
 				delete this->block;
 			}
 			this->block = new SSTableBlock(file, this->path);
-			this->block->readBlock();
+			this->block->readBlock(this->compare_s);
 			this->list_ita = this->block->getBlock()->Begin();
 		}
 
 		//将迭代器迭代到当前的key
 		void toCurrKey()
 		{
-			while (!list_ita.isEmpty())
+			while (!list_ita.isTail())
 			{
 				Slice s = list_ita.next();
 				if (compare(s.getKey(), s.getKeySize(), this->key, this->key_size) == 0)
@@ -232,7 +208,7 @@ private:
 		Slice toTail()
 		{
 			Slice s;
-			while (!list_ita.isEmpty())
+			while (!list_ita.isTail())
 			{
 				s = list_ita.next();
 			}

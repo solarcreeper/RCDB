@@ -35,21 +35,21 @@ SkipList::~SkipList()
 	this->header = NULL;
 }
 
-int SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value, int value_size)
+int SkipList::insertNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, unsigned char* value, int value_size)
 {
 	SkipListNode** update = new SkipListNode*[this->max_level];
 	SkipListNode* current = this->header;
 	for (int i = this->max_level - 1; i >= 0; --i)
 	{
 		SkipListNode* next = NULL;
-		while ((next = current->forward[i]) && (compare(key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1))
+		while ((next = current->forward[i]) && (this->compare(compare, key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1))
 		{
 			current = next;
 		}
 		update[i] = current;
 	}
 
-	bool is_find = (update[0]->forward[0] && compare(update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
+	bool is_find = (update[0]->forward[0] && this->compare(compare, update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
 	int result = FAILED;
 	if (!is_find)
 	{
@@ -75,21 +75,21 @@ int SkipList::insertNode(unsigned char* key, int key_size, unsigned char* value,
 	return result;
 }
 
-int SkipList::deleteNode(unsigned char* key, int key_size)
+int SkipList::deleteNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size)
 {
 	SkipListNode** update = new SkipListNode*[this->max_level];
 	for (int i = this->max_level - 1; i >= 0; i--)
 	{
 		SkipListNode* current = this->header;
 		SkipListNode* next = NULL;
-		while ((next = current->forward[i]) && (compare(key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1))
+		while ((next = current->forward[i]) && (this->compare(compare, key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1))
 		{
 			current = next;
 		}
 		update[i] = current;
 	}
 
-	bool is_find = (update[0]->forward[0] && compare(update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
+	bool is_find = (update[0]->forward[0] && this->compare(compare, update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
 	int result = FAILED;
 	if (is_find)
 	{
@@ -111,17 +111,17 @@ int SkipList::deleteNode(unsigned char* key, int key_size)
 	return result;
 }
 
-Slice SkipList::searchNode(unsigned char* key, int key_size)
+Slice SkipList::searchNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size)
 {
 	SkipListNode* current = this->header;
 	for (int i = this->max_level - 1; i >= 0; i--)
 	{
 		SkipListNode* next = NULL;
-		while ((next = current->forward[i]) && compare(key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1)
+		while ((next = current->forward[i]) && this->compare(compare, key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1)
 		{
 			current = next;
 		}
-		if (next && compare(next->slice.getKey(), next->slice.getKeySize(), key, key_size) == 0)
+		if (next && this->compare(compare, next->slice.getKey(), next->slice.getKeySize(), key, key_size) == 0)
 		{
 			return Slice(next->slice.getKey(), next->slice.getKeySize(), next->slice.getValue(), next->slice.getValueSize());
 		}
@@ -184,8 +184,12 @@ int SkipList::getLevel(int min, int max)
 }
 
 
-int SkipList::compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth_b)
+int SkipList::compare(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* a, int lenth_a, unsigned char* b, int lenth_b)
 {
+	if (compare != NULL)
+	{
+		return compare(a, lenth_a, b, lenth_b);
+	}
 
 	int size = lenth_a;
 	if (size > lenth_b)

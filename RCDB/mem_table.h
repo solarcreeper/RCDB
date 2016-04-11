@@ -10,8 +10,8 @@ class MemTable
 public:
 	MemTable(int level = 100, int mem_table_max = 1000, std::string mem_table_path = "./data/mem_table.dat");
 	~MemTable();
-	int put(unsigned char* key, int key_size, unsigned char* value, int value_size);
-	Slice get(unsigned char* key, int key_size);
+	int put(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, unsigned char* value, int value_size);
+	Slice get(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size);
 	
 public:
 	void saveMemtable(bool* write_table_done);

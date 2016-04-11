@@ -8,7 +8,6 @@ SSTableBlock::SSTableBlock(std::string filename, std::string path)
 	this->list_node->next = NULL;
 	this->block = new SkipList(5);
 	this->size = 0;
-
 	//create file if not exist
 	std::ofstream file(this->file_url, std::ios::binary | std::ios::app);
 	file.close();
@@ -28,7 +27,7 @@ SSTableBlock::~SSTableBlock()
 	}
 }
 
-void SSTableBlock::readBlock()
+void SSTableBlock::readBlock(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size))
 {
 	std::ifstream file(this->file_url, std::ios::binary);
 	if (!file)
@@ -58,7 +57,7 @@ void SSTableBlock::readBlock()
 		file.read(key, list->key_size);
 		file.read(value, list->value_size);
 
-		this->block->insertNode((unsigned char*)key, list->key_size, (unsigned char*)value, list->value_size);
+		this->block->insertNode(compare, (unsigned char*)key, list->key_size, (unsigned char*)value, list->value_size);
 		
 		delete[] key;
 		delete[] value;
@@ -67,7 +66,7 @@ void SSTableBlock::readBlock()
 	return;
 }
 
-void SSTableBlock::readMemTable()
+void SSTableBlock::readMemTable(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size))
 {
 	std::ifstream file(this->file_url, std::ios::binary);
 	if (!file)
@@ -100,11 +99,11 @@ void SSTableBlock::readMemTable()
 
 		if(is_deleted)
 		{
-			this->block->deleteNode((unsigned char*)key, list->key_size);
+			this->block->deleteNode(compare, (unsigned char*)key, list->key_size);
 		}
 		else
 		{
-			this->block->insertNode((unsigned char*)key, list->key_size, (unsigned char*)value, list->value_size);
+			this->block->insertNode(compare, (unsigned char*)key, list->key_size, (unsigned char*)value, list->value_size);
 		}
 
 		delete[] key;
@@ -126,7 +125,7 @@ void SSTableBlock::saveBlock()
 
 	SkipList::iterator ita;
 	ita = block->Begin();
-	while (!ita.isEmpty())
+	while (!ita.isTail())
 	{
 		Slice slice;
 		slice = ita.next();
@@ -139,7 +138,7 @@ void SSTableBlock::saveBlock()
 		}
 	}
 	ita = block->Begin();
-	while (!ita.isEmpty())
+	while (!ita.isTail())
 	{
 		Slice slice;
 		slice = ita.next();
@@ -153,16 +152,16 @@ void SSTableBlock::saveBlock()
 	return;
 }
 
-int SSTableBlock::addRecord(Slice& slice)
+int SSTableBlock::addRecord(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), Slice& slice)
 {
 	int result = -1;
 	if (slice.isDeleted())
 	{
-		result = this->block->deleteNode(slice.getKey(), slice.getKeySize());
+		result = this->block->deleteNode(compare, slice.getKey(), slice.getKeySize());
 	}
 	else
 	{
-		result = this->block->insertNode(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
+		result = this->block->insertNode(compare, slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
 	}
 	if (result == INSERT_VALUE_SUCCESS)
 	{

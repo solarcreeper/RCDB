@@ -1,9 +1,9 @@
 #ifndef SKIPLIST_H
 #define SKIPLIST_H
-#include "slice.h"
 #include <iostream>
 #include <time.h>
 #include <fstream>
+#include "slice.h"
 
 struct SkipListNode
 {
@@ -26,9 +26,9 @@ public:
 	explicit SkipList(int max_level = 12);
 	~SkipList();
 
-	Slice searchNode(unsigned char* key, int key_size);
-	int insertNode(unsigned char* key, int key_size, unsigned char* value, int value_size);
-	int deleteNode(unsigned char* key, int key_size);
+	Slice searchNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size);
+	int insertNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, unsigned char* value, int value_size);
+	int deleteNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size);
 
 	int getSize();
 public:
@@ -43,7 +43,7 @@ private:
 	SkipListNode* header;
 
 private:
-	int compare(unsigned char* a, int lenth_a, unsigned char* b, int lenth_b);
+	int compare(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* a, int lenth_a, unsigned char* b, int lenth_b);
 	int getLevel(int min, int max);
 
 
@@ -99,7 +99,7 @@ private:
 			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
 		}
 
-		bool isEmpty()
+		bool isTail()
 		{
 			if (curr == NULL)
 			{

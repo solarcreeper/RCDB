@@ -24,7 +24,7 @@ MemTable::~MemTable()
 	}
 }
 
-int MemTable::put(unsigned char* key, int key_size, unsigned char* value, int value_size)
+int MemTable::put(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, unsigned char* value, int value_size)
 {
 	SkipList* table = this->mem_table1;
 	if (!this->current_table)
@@ -34,24 +34,24 @@ int MemTable::put(unsigned char* key, int key_size, unsigned char* value, int va
 	int result = FAILED;
 	if (value_size == 0)
 	{
-		result = table->deleteNode(key, key_size);
+		result = table->deleteNode(compare, key, key_size);
 	}
 	else
 	{
-		result = table->insertNode(key, key_size, value, value_size);
+		result = table->insertNode(compare, key, key_size, value, value_size);
 	}
 	return result;
 }
 
-Slice MemTable::get(unsigned char* key, int key_size)
+Slice MemTable::get(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size)
 {
 	Slice slice;
 	if (this->current_table)
 	{
-		slice = this->mem_table1->searchNode(key, key_size);
+		slice = this->mem_table1->searchNode(compare, key, key_size);
 		if (slice.getKeySize() == 0)
 		{
-			Slice s = this->mem_table2->searchNode(key, key_size);
+			Slice s = this->mem_table2->searchNode(compare, key, key_size);
 			return Slice(s.getKey(),s.getKeySize(),s.getValue(),s.getValueSize());
 		}
 		else
@@ -60,10 +60,10 @@ Slice MemTable::get(unsigned char* key, int key_size)
 		}
 	}
 	else {
-		slice = this->mem_table2->searchNode(key, key_size);
+		slice = this->mem_table2->searchNode(compare, key, key_size);
 		if (slice.getKeySize() == 0)
 		{
-			Slice s = this->mem_table1->searchNode(key, key_size);
+			Slice s = this->mem_table1->searchNode(compare, key, key_size);
 			return Slice(s.getKey(), s.getKeySize(), s.getValue(), s.getValueSize());
 		}
 		else {
@@ -110,7 +110,7 @@ void MemTable::saveMemtable(bool* write_table_done)
 
 	SkipList::iterator ita;
 	ita = table->Begin();
-	while (!ita.isEmpty())
+	while (!ita.isTail())
 	{
 		Slice slice;
 		slice = ita.next();
@@ -120,7 +120,7 @@ void MemTable::saveMemtable(bool* write_table_done)
 		file.write((char*)&value_size, length);
 	}
 	ita = table->Begin();
-	while (!ita.isEmpty())
+	while (!ita.isTail())
 	{
 		Slice slice;
 		slice = ita.next();

@@ -79,7 +79,7 @@ private:
 			return result;
 		}
 
-		bool isEmpty()
+		bool isTail()
 		{
 			if (curr == NULL)
 			{
