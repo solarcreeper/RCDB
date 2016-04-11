@@ -1,6 +1,7 @@
 #ifndef  SLICELIST_H
 #define SLICELIST_H
 #include "slice.h"
+#include "iterator.h"
 
 struct SliceListNode
 {
@@ -21,7 +22,7 @@ public:
 private:
 	SliceListNode* slice_list;
 
-	class List_Iterator
+	class List_Iterator : public Iterator
 	{
 		SliceListNode* curr;
 		SliceListNode* head;
@@ -89,7 +90,11 @@ private:
 		
 		bool isHead()
 		{
-
+			if (curr == head || head->next == curr)
+			{
+				return true;
+			}
+			return false;
 		}
 	};
 

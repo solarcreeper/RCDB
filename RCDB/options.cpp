@@ -15,6 +15,8 @@ Options::Options(int memtable_level,
 	this->index_name = index_name;
 	this->snapshot_path = snapshot_path;
 	this->compare = compare;
+
+	File().createDir(this->path);
 }
 
 Options::~Options()

@@ -13,6 +13,7 @@ public:
 
 public:
 	SSTable* getTable();
+	std::string getBlockPath();
 
 private:
 	SSTableBlock* cache_block[CACHE_SIZE];

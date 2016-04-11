@@ -121,3 +121,9 @@ SSTable* Cache::getTable()
 	}
 	return NULL;
 }
+
+
+std::string Cache::getBlockPath()
+{
+	return this->sstable_block_path;
+}

@@ -7,6 +7,7 @@ DB::DB(Options option)
 	this->filter = new SSTableFilter(option.mem_table_name, option.index_name, option.path);
 	this->write_table_done = false;
 	this->option = option;
+	this->snapshot = new Snapshot(option);
 }
 
 DB::~DB()
@@ -27,6 +28,11 @@ DB::~DB()
 	{
 		delete this->filter;
 		this->filter = NULL;
+	}
+	if (this->snapshot)
+	{
+		delete this->snapshot;
+		this->snapshot = NULL;
 	}
 }
 
@@ -176,4 +182,15 @@ SSTable* DB::dbBegin()
 Options DB::getOption()
 {
 	return this->option;
+}
+
+SSTable* DB::getSSTable()
+{
+	return this->cache->getTable();
+}
+
+Cache* DB::createSnapshot()
+{
+	this->saveData();
+	return this->snapshot->create(this->cache->getTable());
 }

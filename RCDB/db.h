@@ -5,6 +5,8 @@
 #include "sstable_filter.h"
 #include "options.h"
 #include "slicelist.h"
+#include "snapshot.h"
+#include "iterator.h"
 
 class DB
 {
@@ -20,7 +22,11 @@ public:
 	Slice batchGet(unsigned char* key, int key_size);
 	bool writeBatch();
 	Options getOption();
-	
+	SSTable* getSSTable();
+
+public:
+	Cache* createSnapshot();
+
 public:
 	void printList();
 	void printListToFile();
@@ -48,7 +54,10 @@ private:
 	Options option;
 
 private:
-	class DB_Iterator
+	Snapshot* snapshot;
+
+private:
+	class DB_Iterator : public Iterator
 	{
 	private:
 		SSTableBlock* block;
@@ -157,7 +166,7 @@ private:
 			}
 		}
 
-		Slice curr()
+		Slice current()
 		{
 			return list_ita.current();
 		}

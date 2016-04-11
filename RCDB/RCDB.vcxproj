@@ -148,9 +148,10 @@
   <ItemGroup>
     <ClInclude Include="cache.h" />
     <ClInclude Include="db.h" />
+    <ClInclude Include="file.h" />
+    <ClInclude Include="iterator.h" />
     <ClInclude Include="mem_table.h" />
     <ClInclude Include="options.h" />
-    <ClInclude Include="port.hpp" />
     <ClInclude Include="skiplist.h" />
     <ClInclude Include="slice.h" />
     <ClInclude Include="slicelist.h" />

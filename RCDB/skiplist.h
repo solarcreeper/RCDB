@@ -4,6 +4,7 @@
 #include <time.h>
 #include <fstream>
 #include "slice.h"
+#include "iterator.h"
 
 struct SkipListNode
 {
@@ -48,7 +49,7 @@ private:
 
 
 private:
-	class List_Iterator
+	class List_Iterator : public Iterator
 	{
 		SkipListNode* curr;
 		SkipListNode* head;
