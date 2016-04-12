@@ -29,6 +29,7 @@ public:
 
 	Slice searchNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size);
 	int insertNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, unsigned char* value, int value_size);
+	int SkipList::insertNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, unsigned char* value, int value_size, bool is_deleted);
 	int deleteNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size);
 
 	int getSize();
@@ -76,7 +77,7 @@ private:
 			}
 			p = it->slice;
 			curr = it;
-			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
+			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize(), p.isDeleted());
 		}
 
 		Slice next()
@@ -87,7 +88,7 @@ private:
 				p = curr->forward[0]->slice;
 				curr = curr->forward[0];
 			}
-			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
+			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize(), p.isDeleted());
 		}
 
 		Slice current()
@@ -97,7 +98,7 @@ private:
 			{
 				p = curr->slice;
 			}
-			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize());
+			return Slice(p.getKey(), p.getKeySize(), p.getValue(), p.getValueSize(), p.isDeleted());
 		}
 
 		bool isTail()

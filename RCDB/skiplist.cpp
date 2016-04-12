@@ -35,6 +35,46 @@ SkipList::~SkipList()
 	this->header = NULL;
 }
 
+int SkipList::insertNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, unsigned char* value, int value_size, bool is_deleted)
+{
+	SkipListNode** update = new SkipListNode*[this->max_level];
+	SkipListNode* current = this->header;
+	for (int i = this->max_level - 1; i >= 0; --i)
+	{
+		SkipListNode* next = NULL;
+		while ((next = current->forward[i]) && (this->compare(compare, key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1))
+		{
+			current = next;
+		}
+		update[i] = current;
+	}
+
+	bool is_find = (update[0]->forward[0] && this->compare(compare, update[0]->forward[0]->slice.getKey(), update[0]->forward[0]->slice.getKeySize(), key, key_size) == 0);
+	int result = FAILED;
+	if (!is_find)
+	{
+		SkipListNode* node = new SkipListNode;
+		node->slice = Slice(key, key_size, value, value_size, is_deleted);
+		int node_level = this->getLevel(1, this->max_level);
+
+		node->forward = new SkipListNode*[node_level];
+		for (int i = 0; i < node_level; i++)
+		{
+			node->forward[i] = update[i]->forward[i];
+			update[i]->forward[i] = node;
+		}
+		result = INSERT_VALUE_SUCCESS;
+		this->size++;
+	}
+	else
+	{
+		update[0]->forward[0]->slice.setValue(value, value_size);
+		result = MODIFY_VALUE_SUCCESS;
+	}
+	delete[] update;
+	return result;
+}
+
 int SkipList::insertNode(int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, unsigned char* value, int value_size)
 {
 	SkipListNode** update = new SkipListNode*[this->max_level];
@@ -115,6 +155,7 @@ Slice SkipList::searchNode(int(*compare)(unsigned char* key, int key_size, unsig
 {
 	SkipListNode* current = this->header;
 	for (int i = this->max_level - 1; i >= 0; i--)
+
 	{
 		SkipListNode* next = NULL;
 		while ((next = current->forward[i]) && this->compare(compare, key, key_size, next->slice.getKey(), next->slice.getKeySize()) == 1)
@@ -123,15 +164,13 @@ Slice SkipList::searchNode(int(*compare)(unsigned char* key, int key_size, unsig
 		}
 		if (next && this->compare(compare, next->slice.getKey(), next->slice.getKeySize(), key, key_size) == 0)
 		{
-			if (next->slice.isDeleted())
-			{
-				return Slice();
-			}
-			return Slice(next->slice.getKey(), next->slice.getKeySize(), next->slice.getValue(), next->slice.getValueSize());
+			return Slice(next->slice.getKey(), next->slice.getKeySize(), next->slice.getValue(), next->slice.getValueSize(), next->slice.isDeleted());
 		}
 	}
 	return Slice();
 }
+
+
 
 void SkipList::printList()
 {

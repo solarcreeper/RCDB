@@ -49,25 +49,27 @@ Slice MemTable::get(int(*compare)(unsigned char* key, int key_size, unsigned cha
 	if (this->current_table)
 	{
 		slice = this->mem_table1->searchNode(compare, key, key_size);
-		if (slice.getKeySize() == 0)
+		if (slice.getKeySize() == 0 && (!slice.isDeleted()))
 		{
 			Slice s = this->mem_table2->searchNode(compare, key, key_size);
-			return Slice(s.getKey(),s.getKeySize(),s.getValue(),s.getValueSize());
+
+			return Slice(s.getKey(),s.getKeySize(),s.getValue(),s.getValueSize(), s.isDeleted());
 		}
 		else
 		{
-			return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
+			return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize(), slice.isDeleted());
 		}
 	}
 	else {
 		slice = this->mem_table2->searchNode(compare, key, key_size);
-		if (slice.getKeySize() == 0)
+		if (slice.getKeySize() == 0 && (!slice.isDeleted()))
 		{
 			Slice s = this->mem_table1->searchNode(compare, key, key_size);
-			return Slice(s.getKey(), s.getKeySize(), s.getValue(), s.getValueSize());
+
+			return Slice(s.getKey(), s.getKeySize(), s.getValue(), s.getValueSize(), s.isDeleted());
 		}
 		else {
-			return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
+			return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize(), slice.isDeleted());
 		}
 	}
 }

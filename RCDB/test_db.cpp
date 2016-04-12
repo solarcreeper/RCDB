@@ -9,7 +9,7 @@ void main()
 	p.mem_table_size = 5000;
 	DB *db = new DB(p);
 
-	const int size = 10;
+	const int size = 2;
 	unsigned char* key[size];
 	unsigned char* value[size];
 	for (int i = 0; i < size; i++)
@@ -25,12 +25,15 @@ void main()
 		key[i][4] = '\0';
 		value[i][4] = '\0';
 	}
+	//db->put(key[0], 5, value[0], 5);
+	//db->put(key[0], 5, NULL, 0);
+	Slice s = db->get(key[0], 5);
 
 	double start = clock();
 	for (int i = 0; i < size; i++)
 	{
-		//db->batchPut(key[i], 5, value[i], 5);
-		db->put(key[i], 5, value[i], 5);
+		db->batchPut(key[i], 5, value[i], 5);
+		//db->put(key[i], 5, value[i], 5);
 		std::string s((char*)key[i]);
 		std::cout << s << std::endl;
 	}
@@ -39,16 +42,21 @@ void main()
 
 	db->printListToFile();
 
-	db->put(key[0], 5, key[0], 0);
-
-	Slice s;
+	db->batchPut(key[1], 5, NULL, 0);
+	Slice ss = db->get(key[0], 5);
 	for (int i = 0; i < size; i++)
 	{
-		//s = db->batchGet(key[i], 5);
-		s = db->get(key[i], 5);
+		s = db->batchGet(key[i], 5);
+		//s = db->get(key[i], 5);
+		if(s.getValue())
+		std::string tem((char*)s.getValue());
 	}
+
 	db->writeBatch();
-	/*DB::db_iterator ita(p.compare, key[1], 5, p.path);
+
+	s = db->get(key[0], 5);
+	s = db->get(key[1], 5);
+	DB::db_iterator ita(p.compare, key[1], 5, p.path);
 	ita = db->dbBegin();
 
 	while (!ita.isTail())
@@ -76,7 +84,7 @@ void main()
 	while (!ita2.isTail())
 	{
 		Slice slice = ita2.next();
-	}*/
+	}
 	double s_1 = clock();
 	for (int i = 0; i < 2; i++)
 	{

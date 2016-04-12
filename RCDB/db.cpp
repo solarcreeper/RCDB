@@ -40,9 +40,13 @@ Slice DB::get(unsigned char* key, int key_size)
 {
 	Slice slice;
 	slice = this->mem_table->get(this->option.compare, key, key_size);
-	if (slice.getKeySize() == 0)
+	if (slice.getKeySize() == 0 && (!slice.isDeleted()))
 	{
 		slice = this->cache->get(this->option.compare, key, key_size);
+	}
+	if (slice.isDeleted())
+	{
+		return Slice();
 	}
 	return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
 }
@@ -102,22 +106,22 @@ Slice DB::batchGet(unsigned char* key, int key_size)
 	}
 	Slice slice;
 	slice = this->mem_table_batch->get(this->option.compare, key, key_size);
-	if (slice.getKeySize() == 0)
+	if (slice.getKeySize() == 0 && (!slice.isDeleted()))
 	{
 		slice = this->mem_table->get(this->option.compare, key, key_size);
 	}
 
-	if (slice.getKeySize() == 0)
+	if (slice.getKeySize() == 0 && (!slice.isDeleted()))
 	{
 		slice = this->cache->get(this->option.compare, key, key_size);
 	}
 
-	if (slice.getKeySize() > 0)
+	if (slice.getKeySize() > 0 && (!slice.isDeleted()))
 	{
 		this->batch_result->add(slice);
+		return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
 	}
-
-	return Slice(slice.getKey(), slice.getKeySize(), slice.getValue(), slice.getValueSize());
+	return Slice();
 }
 
 bool DB::writeBatch()

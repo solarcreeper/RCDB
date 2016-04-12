@@ -9,6 +9,29 @@ Slice::Slice()
 	this->value_size = 0;
 }
 
+Slice::Slice(unsigned char* key, int key_size, unsigned char* value, int value_size, bool is_deleted)
+{
+	this->is_deleted = is_deleted;
+	this->key_size = key_size;
+	this->value_size = value_size;
+
+
+	if (key_size > 0)
+	{
+		this->key = new unsigned char[key_size];
+		memcpy(this->key, key, key_size);
+		/*delete[] key;
+		key = NULL;*/
+	}
+	if (value_size > 0)
+	{
+		this->value = new unsigned char[value_size];
+		memcpy(this->value, value, value_size);
+		/*delete[] value;
+		value = NULL;*/
+	}
+}
+
 Slice::Slice(unsigned char* key, int key_size, unsigned char* value, int value_size)
 {
 	this->is_deleted = false;

@@ -97,14 +97,7 @@ void SSTableBlock::readMemTable(int(*compare)(unsigned char* key, int key_size, 
 		file.read(value, list->value_size);
 		file.read((char*)&is_deleted, sizeof(bool));
 
-		if(is_deleted)
-		{
-			this->block->deleteNode(compare, (unsigned char*)key, list->key_size);
-		}
-		else
-		{
-			this->block->insertNode(compare, (unsigned char*)key, list->key_size, (unsigned char*)value, list->value_size);
-		}
+		this->block->insertNode(compare, (unsigned char*)key, list->key_size, (unsigned char*)value, list->value_size, is_deleted);
 
 		delete[] key;
 		delete[] value;

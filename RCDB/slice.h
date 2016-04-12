@@ -6,6 +6,7 @@ class Slice {
 public:
 	explicit Slice();
 	explicit Slice(unsigned char* key, int key_size, unsigned char* value, int value_size);
+	explicit Slice(unsigned char* key, int key_size, unsigned char* value, int value_size, bool is_deleted);
 	~Slice();
 	unsigned char* getKey();
 	unsigned char* getValue();
