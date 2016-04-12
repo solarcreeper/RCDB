@@ -25,66 +25,108 @@ void main()
 		key[i][4] = '\0';
 		value[i][4] = '\0';
 	}
-	//db->put(key[0], 5, value[0], 5);
-	//db->put(key[0], 5, NULL, 0);
-	Slice s = db->get(key[0], 5);
-
-	double start = clock();
-	for (int i = 0; i < size; i++)
+	
+	int test = 3;
+	switch (test)
 	{
-		db->batchPut(key[i], 5, value[i], 5);
-		//db->put(key[i], 5, value[i], 5);
-		std::string s((char*)key[i]);
-		std::cout << s << std::endl;
+	case 0:
+		//test put and get
+		for (int i = 0; i < size; i++)
+		{
+			bool result = db->put(key[i], 5, value[i], 5);
+		}
+		for (int i = 0; i < size; i++)
+		{
+			Slice s = db->get(key[i], 5);
+		}
+		break;
+	case 1:
+		//test put and delete
+		for (int i = 0; i < size; i++)
+		{
+			bool result = db->put(key[i], 5, value[i], 5);
+		}
+		for (int i = 0; i < size; i++)
+		{
+			bool result = db->put(key[i], 5, NULL, 0);
+		}
+		for (int i = 0; i < size; i++)
+		{
+			Slice s = db->get(key[i], 5);
+		}
+		break;
+	case 2:
+		//test batchput and get
+		for (int i = 0; i < size; i++)
+		{
+			bool result = db->batchPut(key[i], 5, value[i], 5);
+		}
+		for (int i = 0; i < size; i++)
+		{
+			Slice s = db->batchGet(key[i], 5);
+		}
+		break;
+	case 3:
+		//test batchput and delete
+		for (int i = 0; i < size; i++)
+		{
+			bool result = db->batchPut(key[i], 5, value[i], 5);
+		}
+		for (int i = 0; i < size; i++)
+		{
+			bool result = db->batchPut(key[i], 5, NULL, 0);
+		}
+		for (int i = 0; i < size; i++)
+		{
+			Slice s = db->batchGet(key[i], 5);
+		}
+		db->writeBatch();
+
+		for (int i = 0; i < size; i++)
+		{
+			Slice s = db->get(key[i], 5);
+		}
+		break;
+	default:
+		break;
 	}
-	double end1 = clock();
-	int total1 = end1 - start;
 
-	db->printListToFile();
+	
 
-	db->batchPut(key[1], 5, NULL, 0);
-	Slice ss = db->get(key[0], 5);
-	for (int i = 0; i < size; i++)
-	{
-		s = db->batchGet(key[i], 5);
-		//s = db->get(key[i], 5);
-		if(s.getValue())
-		std::string tem((char*)s.getValue());
-	}
 
-	db->writeBatch();
 
-	s = db->get(key[0], 5);
-	s = db->get(key[1], 5);
-	DB::db_iterator ita(p.compare, key[1], 5, p.path);
-	ita = db->dbBegin();
+	
 
-	while (!ita.isTail())
-	{
-		Slice s1 = ita.current();
-		Slice s = ita.next();
-	}
+	
+	
+	//DB::db_iterator ita(p.compare, key[1], 5, p.path);
+	//ita = db->dbBegin();
 
-	s = ita.pre();
-	s = ita.pre();
-	while (!ita.isHead())
-	{
-		s = ita.pre();
-	}
+	//while (!ita.isTail())
+	//{
+	//	Slice s1 = ita.current();
+	//	Slice s = ita.next();
+	//}
 
-	DB::batch_iterator ita1;
-	ita1 = db->batchBegin();
-	while (!ita1.isTail())
-	{
-		Slice s = ita1.next();
-	}
+	//while (!ita.isHead())
+	//{
+	//	Slice s = ita.pre();
+	//}
 
-	DB::mem_iterator ita2;
-	ita2 = db->memBegin();
-	while (!ita2.isTail())
-	{
-		Slice slice = ita2.next();
-	}
+	//DB::batch_iterator ita1;
+	//ita1 = db->batchBegin();
+	//while (!ita1.isTail())
+	//{
+	//	Slice s = ita1.next();
+	//}
+
+	//DB::mem_iterator ita2;
+	//ita2 = db->memBegin();
+	//while (!ita2.isTail())
+	//{
+	//	Slice slice = ita2.next();
+	//}
+
 	double s_1 = clock();
 	for (int i = 0; i < 2; i++)
 	{
