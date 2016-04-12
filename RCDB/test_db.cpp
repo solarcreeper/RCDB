@@ -1,5 +1,6 @@
 #include "db.h"
 
+
 //用一个表来存批量操作，成功则push到磁盘，失败则丢弃
 void main()
 {
@@ -38,14 +39,16 @@ void main()
 
 	db->printListToFile();
 
+	db->put(key[0], 5, key[0], 0);
+
 	Slice s;
 	for (int i = 0; i < size; i++)
 	{
 		//s = db->batchGet(key[i], 5);
 		s = db->get(key[i], 5);
 	}
-	//db->writeBatch();
-	DB::db_iterator ita(p.compare, key[1], 5, p.path);
+	db->writeBatch();
+	/*DB::db_iterator ita(p.compare, key[1], 5, p.path);
 	ita = db->dbBegin();
 
 	while (!ita.isTail())
@@ -61,8 +64,6 @@ void main()
 		s = ita.pre();
 	}
 
-	//db->printListToFile();
-
 	DB::batch_iterator ita1;
 	ita1 = db->batchBegin();
 	while (!ita1.isTail())
@@ -75,10 +76,16 @@ void main()
 	while (!ita2.isTail())
 	{
 		Slice slice = ita2.next();
+	}*/
+	double s_1 = clock();
+	for (int i = 0; i < 2; i++)
+	{
+		Cache* cache = db->createSnapshot();
 	}
-	Cache* cache = db->createSnapshot();
-
-	double end2 = clock();
+	double s_2 = clock();
 	delete db;
-	int total2 = end2 - end1;
+	double s_3 = clock();
+
+	int r1 = s_2 - s_1;
+	int r2 = s_3 - s_2;
 }

@@ -123,6 +123,10 @@ Slice SkipList::searchNode(int(*compare)(unsigned char* key, int key_size, unsig
 		}
 		if (next && this->compare(compare, next->slice.getKey(), next->slice.getKeySize(), key, key_size) == 0)
 		{
+			if (next->slice.isDeleted())
+			{
+				return Slice();
+			}
 			return Slice(next->slice.getKey(), next->slice.getKeySize(), next->slice.getValue(), next->slice.getValueSize());
 		}
 	}
