@@ -157,7 +157,7 @@ std::string SSTable::getFilename(unsigned char* start, int length)
 		std::string file = std::to_string(file_ahead).append(".dat");
 		return file;
 	}
-	return NULL;
+	return "";
 }
 
 int SSTable::getFilePrefix(unsigned char* start, int start_length)

@@ -69,10 +69,9 @@ Cache* Snapshot::create(SSTable* index_file)
 	input.close();
 	output.close();
 
-	Options p;
-	p.getDataSavePath() = option.getSnapshotPath() + std::to_string(this->version) + "/";
+	std::string path = option.getSnapshotPath() + std::to_string(this->version) + "/";
 
-	Cache* cache = new Cache(p.getDataSavePath() + p.getIndexName(), p.getDataSavePath());
+	Cache* cache = new Cache(path + option.getIndexName(), path);
 	SnapshotList* node = new SnapshotList;
 	node->cache = cache;
 	node->next = NULL;

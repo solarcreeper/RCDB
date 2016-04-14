@@ -59,7 +59,7 @@ void test()
 		value[i][4] = '\0';
 	}
 	
-	int test = 3;
+	int test = 0;
 	switch (test)
 	{
 	case 0:
@@ -157,6 +157,7 @@ void test()
 	for (int i = 0; i < 2; i++)
 	{
 		Cache* cache = db->createSnapshot();
+		Slice s = cache->get(p.compare, key[1], 5);
 	}
 	double s_2 = clock();
 	delete db;
