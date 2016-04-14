@@ -1,12 +1,45 @@
 #include "db.h"
 
+void test();
 
-//用一个表来存批量操作，成功则push到磁盘，失败则丢弃
-void main()
+int main()
+{
+	test();
+
+	Options p;
+	p.setOptions(100, 5000, "./data1/", "./snapshot1/");
+	DB *db = new DB(p);
+
+
+
+	const int size = 4;
+	unsigned char* key[size];
+	unsigned char* value[size];
+	for (int i = 0; i < size; i++)
+	{
+		key[i] = new unsigned char[5];
+		value[i] = new unsigned char[5];
+
+		for (int m = 0; m < 4; m++)
+		{
+			key[i][m] = rand() % 25 + 65;
+			value[i][m] = rand() % 25 + 65;
+		}
+		key[i][4] = '\0';
+		value[i][4] = '\0';
+	}
+
+	db->batchPut( key[2], 5, value[2], 5);
+	Slice s = db->batchGet(key[2], 5);
+	db->writeBatch();
+	s = db->get(key[2], 5);
+	return 0;
+}
+
+void test()
 {
 	Options p;
-	p.mem_table_level = 100;
-	p.mem_table_size = 5000;
+	p.setOptions(100, 5000, "./data1/", "./snapshot1/");
 	DB *db = new DB(p);
 
 	const int size = 2;
@@ -92,13 +125,6 @@ void main()
 	}
 
 	
-
-
-
-	
-
-	
-	
 	//DB::db_iterator ita(p.compare, key[1], 5, p.path);
 	//ita = db->dbBegin();
 
@@ -134,8 +160,15 @@ void main()
 	}
 	double s_2 = clock();
 	delete db;
+	db = NULL;
 	double s_3 = clock();
 
 	int r1 = s_2 - s_1;
 	int r2 = s_3 - s_2;
+
+	for (int i = 0; i < size; i++)
+	{
+		delete[] key[i];
+		delete[] value[i];
+	}
 }

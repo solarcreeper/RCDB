@@ -2,9 +2,9 @@
 
 DB::DB(Options option)
 {
-	this->cache = new Cache(option.path + option.index_name, option.path);
-	this->mem_table = new MemTable(option.mem_table_level, option.mem_table_size, option.path + option.mem_table_name);
-	this->filter = new SSTableFilter(option.mem_table_name, option.index_name, option.path);
+	this->cache = new Cache(option.getDataSavePath() + option.getIndexName(), option.getDataSavePath());
+	this->mem_table = new MemTable(option.getMemTableLevel(), option.getMemTableSize(), option.getDataSavePath() + option.getMemTableName());
+	this->filter = new SSTableFilter(option.getMemTableName(), option.getIndexName(), option.getDataSavePath());
 	this->write_table_done = false;
 	this->option = option;
 	this->snapshot = new Snapshot(option);
@@ -74,7 +74,8 @@ bool DB::batchPut(unsigned char* key, int key_size, unsigned char* value, int va
 			delete this->batch_result;
 			this->batch_result = NULL;
 		}
-		this->mem_table_batch = new MemTable(100, INT_MAX);
+		std::string mem_url = option.getDataSavePath() + option.getMemTableName();
+		this->mem_table_batch = new MemTable(100, INT_MAX, mem_url);
 		this->batch_result = new SliceList;
 		this->is_batch_success = true;
 	}

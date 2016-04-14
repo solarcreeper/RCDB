@@ -11,7 +11,7 @@
 class DB
 {
 public:
-	DB(Options option = Options());
+	DB(Options option);
 	~DB();
 
 	Slice get(unsigned char* key, int key_size);

@@ -138,6 +138,8 @@ void MemTable::saveMemtable(bool* write_table_done)
 
 		delete[] key;
 		delete[] value;
+		key = NULL;
+		value = NULL;
 	}
 	file.close();
 	
