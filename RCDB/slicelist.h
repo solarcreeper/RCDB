@@ -60,6 +60,11 @@ private:
 		Slice next()
 		{
 			Slice p;
+			if (curr == NULL)
+			{
+				return Slice();
+			}
+
 			if (curr->next)
 			{
 				p = curr->next->slice;
@@ -72,6 +77,11 @@ private:
 		Slice current()
 		{
 			Slice p;
+			if (curr == NULL)
+			{
+				return Slice();
+			}
+
 			if (curr->slice.getKey() > 0)
 			{
 				p = curr->slice;

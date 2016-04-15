@@ -4,14 +4,13 @@ void test();
 
 int main()
 {
-	test();
+	//test();
 
 	Options p;
 	p.setOptions(100, 5000, "./data1/", "./snapshot1/");
 	DB *db = new DB(p);
 
-
-
+	
 	const int size = 4;
 	unsigned char* key[size];
 	unsigned char* value[size];
@@ -29,10 +28,47 @@ int main()
 		value[i][4] = '\0';
 	}
 
-	db->batchPut( key[2], 5, value[2], 5);
-	Slice s = db->batchGet(key[2], 5);
-	db->writeBatch();
-	s = db->get(key[2], 5);
+
+	DB::db_iterator ita;
+	ita.init(db->dbBegin(), p.compare, key[1], 5, p.getDataSavePath());
+
+	while (!ita.isTail())
+	{
+		Slice s1 = ita.current();
+		Slice s = ita.next();
+	}
+
+	while (!ita.isHead())
+	{
+		Slice s = ita.pre();
+	}
+
+	DB::batch_iterator ita1;
+	ita1.init(db->batchBegin());
+	ita1.current();
+	ita1.pre();
+	ita1.next();
+	
+	while (!ita1.isTail())
+	{
+		Slice s = ita1.next();
+	}
+
+	DB::mem_iterator ita2;
+	ita2.init(db->memBegin());
+
+	ita2.current();
+	ita2.next();
+	while (!ita2.isTail())
+	{
+		Slice slice = ita2.next();
+	}
+
+
+	//db->batchPut( key[2], 5, value[2], 5);
+	//Slice s = db->batchGet(key[2], 5);
+	//db->writeBatch();
+	//s = db->get(key[2], 5);
 	return 0;
 }
 

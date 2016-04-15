@@ -14,7 +14,8 @@ Slice::Slice(unsigned char* key, int key_size, unsigned char* value, int value_s
 	this->is_deleted = is_deleted;
 	this->key_size = key_size;
 	this->value_size = value_size;
-
+	this->key = NULL;
+	this->value = NULL;
 
 	if (key_size > 0)
 	{
