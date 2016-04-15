@@ -164,7 +164,6 @@
     <ClCompile Include="Cache.cpp" />
     <ClCompile Include="db.cpp" />
     <ClCompile Include="file.cpp" />
-    <ClCompile Include="Iterator.cpp" />
     <ClCompile Include="mem_table.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="skiplist.cpp" />

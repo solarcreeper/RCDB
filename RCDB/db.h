@@ -70,11 +70,6 @@ private:
 		int(*compare_s)(unsigned char* key, int key_size, unsigned char* value, int value_size);
 	public:
 
-		DB_Iterator()
-		{
-			
-		}
-
 		~DB_Iterator()
 		{
 			if (this->block != NULL)
@@ -84,15 +79,20 @@ private:
 			}
 		}
 
-		void init(SSTable* index, int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, std::string data_path = "./data/")
+		void init(void* s)
+		{
+			return;
+		}
+
+		void init(void* index, int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, std::string data_path = "./data/")
 		{
 			this->key = key;
 			this->key_size = key_size;
 			this->path = data_path;
 			this->compare_s = compare;
 
-			std::string file = index->getFilename(this->key, this->key_size);
-			this->ita = index->indexBegin();
+			std::string file = ((SSTable*)index)->getFilename(this->key, this->key_size);
+			this->ita = ((SSTable*)index)->indexBegin();
 			while ((!ita.isTail()))
 			{
 				std::string next = ita.next();

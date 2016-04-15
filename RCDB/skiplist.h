@@ -55,10 +55,15 @@ private:
 		SkipListNode* curr;
 		SkipListNode* head;
 	public:
-		void init(SkipListNode* ptr)
+		void init(void* ptr)
 		{
-			curr = ptr;
-			head = ptr;
+			curr = (SkipListNode*)ptr;
+			head = (SkipListNode*)ptr;
+		}
+
+		void init(void* ptr, int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, std::string data_path)
+		{
+			return;
 		}
 
 		Slice pre()

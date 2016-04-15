@@ -27,10 +27,15 @@ private:
 		SliceListNode* curr;
 		SliceListNode* head;
 	public:
-		void init(SliceListNode* ptr)
+		void init(void* ptr)
 		{
-			curr = ptr;
-			head = ptr;
+			curr = (SliceListNode*)ptr;
+			head = (SliceListNode*)ptr;
+		}
+
+		void init(void* ptr, int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, std::string data_path)
+		{
+			return;
 		}
 
 		Slice pre()

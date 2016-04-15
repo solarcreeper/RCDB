@@ -10,8 +10,8 @@ public:
 	virtual Slice current() = 0;
 	virtual bool isHead() = 0;
 	virtual bool isTail() = 0;
-	virtual void init(void* ptr);
-	virtual void init(void* ptr, int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, std::string data_path);
+	virtual void init(void* ptr) = 0;
+	virtual void init(void* ptr, int(*compare)(unsigned char* key, int key_size, unsigned char* value, int value_size), unsigned char* key, int key_size, std::string data_path) = 0;
 };
 #endif // !ITERATOR_H
 
