@@ -5,6 +5,8 @@
 class Iterator
 {
 public:
+	virtual ~Iterator() = 0;
+
 	virtual Slice pre() = 0;
 	virtual Slice next() = 0;
 	virtual Slice current() = 0;

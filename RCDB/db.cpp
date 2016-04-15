@@ -8,6 +8,8 @@ DB::DB(Options option)
 	this->write_table_done = false;
 	this->option = option;
 	this->snapshot = new Snapshot(option);
+	this->mem_table_batch = NULL;
+	this->batch_result = NULL;
 }
 
 DB::~DB()
