@@ -111,7 +111,7 @@ void MemTable::saveMemtable(bool* write_table_done)
 	file.write((char*)&size, length);
 
 	SkipList::iterator ita;
-	ita = table->Begin();
+	ita.init(table->Begin());
 	while (!ita.isTail())
 	{
 		Slice slice;
@@ -121,7 +121,7 @@ void MemTable::saveMemtable(bool* write_table_done)
 		file.write((char*)&key_size, length);
 		file.write((char*)&value_size, length);
 	}
-	ita = table->Begin();
+	ita.init(table->Begin());
 	while (!ita.isTail())
 	{
 		Slice slice;

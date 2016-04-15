@@ -117,7 +117,7 @@ void SSTableBlock::saveBlock()
 	file.write((char*)&this->size, length);
 
 	SkipList::iterator ita;
-	ita = block->Begin();
+	ita.init(block->Begin());
 	while (!ita.isTail())
 	{
 		Slice slice;
@@ -130,7 +130,7 @@ void SSTableBlock::saveBlock()
 			file.write((char*)&value_size, length);
 		}
 	}
-	ita = block->Begin();
+	ita.init(block->Begin());
 	while (!ita.isTail())
 	{
 		Slice slice;

@@ -55,7 +55,7 @@ private:
 		SkipListNode* curr;
 		SkipListNode* head;
 	public:
-		void operator =(SkipListNode* ptr)
+		void init(SkipListNode* ptr)
 		{
 			curr = ptr;
 			head = ptr;

@@ -27,7 +27,7 @@ private:
 		SliceListNode* curr;
 		SliceListNode* head;
 	public:
-		void operator =(SliceListNode* ptr)
+		void init(SliceListNode* ptr)
 		{
 			curr = ptr;
 			head = ptr;

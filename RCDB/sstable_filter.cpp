@@ -46,7 +46,7 @@ void SSTableFilter::filter(int(*compare)(unsigned char* key, int key_size, unsig
 
 	SkipList::iterator ita;
 	SkipList* block = this->data_to_save->getBlock();
-	ita = block->Begin();
+	ita.init(block->Begin());
 	std::string last_index = "";
 	int file_prefix = -1;
 	while (!ita.isTail())

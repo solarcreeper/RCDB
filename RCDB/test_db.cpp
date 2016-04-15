@@ -59,7 +59,7 @@ void test()
 		value[i][4] = '\0';
 	}
 	
-	int test = 0;
+	int test = 2;
 	switch (test)
 	{
 	case 0:
@@ -125,33 +125,33 @@ void test()
 	}
 
 	
-	//DB::db_iterator ita(p.compare, key[1], 5, p.path);
-	//ita = db->dbBegin();
+		DB::db_iterator ita;
+		ita.init(db->dbBegin(), p.compare, key[1], 5, p.getDataSavePath());
 
-	//while (!ita.isTail())
-	//{
-	//	Slice s1 = ita.current();
-	//	Slice s = ita.next();
-	//}
+		while (!ita.isTail())
+		{
+			Slice s1 = ita.current();
+			Slice s = ita.next();
+		}
 
-	//while (!ita.isHead())
-	//{
-	//	Slice s = ita.pre();
-	//}
+		while (!ita.isHead())
+		{
+			Slice s = ita.pre();
+		}
 
-	//DB::batch_iterator ita1;
-	//ita1 = db->batchBegin();
-	//while (!ita1.isTail())
-	//{
-	//	Slice s = ita1.next();
-	//}
+		DB::batch_iterator ita1;
+		ita1.init(db->batchBegin());
+		while (!ita1.isTail())
+		{
+			Slice s = ita1.next();
+		}
 
-	//DB::mem_iterator ita2;
-	//ita2 = db->memBegin();
-	//while (!ita2.isTail())
-	//{
-	//	Slice slice = ita2.next();
-	//}
+		DB::mem_iterator ita2;
+		ita2.init(db->memBegin());
+		while (!ita2.isTail())
+		{
+			Slice slice = ita2.next();
+		}
 
 	double s_1 = clock();
 	for (int i = 0; i < 2; i++)
