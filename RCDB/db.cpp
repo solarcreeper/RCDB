@@ -56,7 +56,7 @@ Slice DB::get(unsigned char* key, int key_size)
 bool DB::put(unsigned char* key, int key_size, unsigned char* value, int value_size)
 {
 	int result = this->mem_table->put(this->option.compare, key, key_size, value, value_size);
-	if (result == INSERT_VALUE_SUCCESS)
+	if (result == INSERT_VALUE_SUCCESS || result == DELETE_VALUE_SUCCESS)
 	{
 		if (this->mem_table->isTableFull())
 		{

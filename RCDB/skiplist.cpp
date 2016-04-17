@@ -145,7 +145,9 @@ int SkipList::deleteNode(int(*compare)(unsigned char* key, int key_size, unsigne
 	}
 	else {
 		//Êä³öÐÅÏ¢
-		result = DELETE_VALUE_FAILED;
+		this->insertNode(compare, key, key_size, key, key_size);
+		this->deleteNode(compare, key, key_size);
+		result = DELETE_VALUE_SUCCESS;
 	}
 	delete[] update;
 	return result;

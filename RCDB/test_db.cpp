@@ -29,46 +29,16 @@ int main()
 	}
 
 
-	DB::db_iterator ita;
-	ita.init(db->dbBegin(), p.compare, key[1], 5, p.getDataSavePath());
 
-	while (!ita.isTail())
-	{
-		Slice s1 = ita.current();
-		Slice s = ita.next();
-	}
-
-	while (!ita.isHead())
-	{
-		Slice s = ita.pre();
-	}
-
-	DB::batch_iterator ita1;
-	ita1.init(db->batchBegin());
-	ita1.current();
-	ita1.pre();
-	ita1.next();
-	
-	while (!ita1.isTail())
-	{
-		Slice s = ita1.next();
-	}
-
-	DB::mem_iterator ita2;
-	ita2.init(db->memBegin());
-
-	ita2.current();
-	ita2.next();
-	while (!ita2.isTail())
-	{
-		Slice slice = ita2.next();
-	}
-
-
-	//db->batchPut( key[2], 5, value[2], 5);
-	//Slice s = db->batchGet(key[2], 5);
-	//db->writeBatch();
-	//s = db->get(key[2], 5);
+	db->put(key[1], 5, value[1], 5);
+	db->put(key[0], 5, value[0], 5);
+	delete db;
+	db = new DB(p);
+	db->put(key[1], 5, NULL, 0);
+	delete db;
+	db = new DB(p);
+	Slice s = db->get(key[1], 5);
+	s = db->get(key[0], 5);
 	return 0;
 }
 
